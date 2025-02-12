@@ -1,0 +1,12 @@
+---
+title: "Paniek_test"
+author: "Tarn"
+date: "2025-02-12"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Pittig vakje
