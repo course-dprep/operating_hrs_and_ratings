@@ -5,8 +5,8 @@
 > Feel free to delete this text.
 
 
-# Title of your Project
-*Timing Matters* 
+# Timing Matters
+
 
 ## Motivation
 
