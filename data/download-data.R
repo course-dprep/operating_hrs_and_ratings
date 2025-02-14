@@ -8,9 +8,6 @@ library(tidyverse)
 library(googledrive)
 library(httpuv)
 
-# Google Drive ID 
-drive_id <-"1kiigtjqbJpwRVyQSNCWgDmpqVVL2Jcyx"
-
 # Downloading the files
 drive_download("Sampled_Data_Business.csv", overwrite = TRUE)
 drive_download("Sampled_Data_Review.csv", overwrite = TRUE)
