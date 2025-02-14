@@ -21,3 +21,15 @@ Data_Merged_Filtered <- Data_Merged_Filtered %>% drop_na(categories, hours, busi
 Data_Merged_Filtered_Cleaned <- Data_Merged_Filtered %>% select(review_count, name, state, categories, hours, business_id, text, stars.x, stars.y, user_id)
 Data_Merged_Filtered_Cleaned <- Data_Merged_Filtered_Cleaned %>% 
   rename(Stars_Business = stars.x, Stars_Users = stars.y, Review = text) 
+
+#Data conversion 
+#Dates
+
+#Adding columns 
+#For Star rating category 
+#For Opening hours category 
+
+#Write function 
+#Sentiment analysis
+
+#Visualize with ggplot 
