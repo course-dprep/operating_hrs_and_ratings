@@ -1,3 +1,5 @@
+# IMPORTANT, These code snippets only work if you have downloaded the raw data locally on your hardware!
+
 # Importing packages
 library(tidyverse)
 library(here)
