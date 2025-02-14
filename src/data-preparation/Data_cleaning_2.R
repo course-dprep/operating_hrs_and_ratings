@@ -1,35 +1,38 @@
-#Data Inspection 
-head(Data_Merged, 50)
-summary(Data_Merged)
+#Merge datasets business & review 
+Yelp <- merge(Sampled_Data_Business, Sampled_Data_Review, by = "business_id", all = TRUE)
+
+#1. Data Inspection 
+View(Yelp)
+summary(Yelp)
 
 # Filtering for Restaurants that are open
-Data_Merged_Filtered <- Data_Merged %>% 
-  filter(str_detect(categories, "Restaurants"),
-         is_open == 1 %>%)
-summary(Data_Merged_Filtered)
+Yelp_Filtered <- Yelp %>% filter(str_detect(categories, "Restaurants") & is_open == 1 & str_detect(text, "[a-zA-Z]"))
+summary(Yelp_Filtered)
          
-#Inspection of NA's
-# Count number of NAs in each column and row 
-colSums(is.na(Data_Merged_Filtered))
-rowSums(is.na(Data_Merged_Filtered))
-
-#Drop NA only in crucial columns 
-Data_Merged_Filtered <- Data_Merged_Filtered %>% drop_na(categories, hours, business_id, text, stars.x, stars.y)
-
-#Data cleaning & Transformation
-#Dropping columns and renaming star.x, star.y and text variables 
-Data_Merged_Filtered_Cleaned <- Data_Merged_Filtered %>% select(review_count, name, state, categories, hours, business_id, text, stars.x, stars.y, user_id)
-Data_Merged_Filtered_Cleaned <- Data_Merged_Filtered_Cleaned %>% 
-  rename(Stars_Business = stars.x, Stars_Users = stars.y, Review = text) 
-
-#Data conversion 
-#Dates
+#2. Data cleaning & Transformation
+#Dropping columns 
+Yelp_Cleaned <- Yelp_Filtered %>% select(business_id, review_count, name, state, stars.x, state, categories, hours, user_id, text, stars.y)
+#Renaming star.x, star.y and text variables 
+Yelp_Cleaned <- Yelp_Cleaned %>% rename(Stars_Business = stars.x, Stars_Users = stars.y, Review = text) 
 
 #Adding columns 
 #For Star rating category 
-#For Opening hours category 
+Yelp_Transform <- Yelp_Cleaned %>%
+  mutate(Stars_Category = case_when(
+    Stars_Business >= 0 & Stars_Business <= 3.5 ~ "low",
+    Stars_Business >= 3.6 & Stars_Business <= 5 ~ "high",
+    TRUE ~ NA_character_
+  ))
+View(Yelp_Transform)
 
+#For Opening hours category 
 #Write function 
 #Sentiment analysis
 
+#Inspection of NA's
+colSums(is.na(Yelp_Transform))
+#Drop NA only in crucial columns 
+Yelp_Transform <- Yelp_Transform %>% drop_na(categories, hours, business_id, Review, Stars_Business, Stars_Users)
+
+#3. Data exploration and plotting 
 #Visualize with ggplot 
