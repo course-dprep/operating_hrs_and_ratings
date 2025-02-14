@@ -10,13 +10,9 @@ Data_Checking <- read_csv(here("yelp_academic_dataset_checkin.csv"))
 Data_Tip <- read_csv(here("yelp_academic_dataset_tip.csv"))
 Data_User <- read_csv(here("yelp_academic_dataset_user.csv"))
 
-# Filtering on restaurants
-Data_Business_Restaurants <- Data_Business %>%
-  filter(str_detect(categories, "Restaurants"))
-
 # Sample Business
-Sampled_Business <- Data_Business_Restaurants %>% 
-  sample_n(5000)
+Sampled_Business <- Data_Business %>% 
+  sample_n(10000)
 
 # Sample Reviews
 Sampled_Review <- Data_Reviews %>% 
