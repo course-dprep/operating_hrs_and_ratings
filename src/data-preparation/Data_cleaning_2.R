@@ -20,7 +20,7 @@ Yelp_Cleaned <- Yelp_Cleaned %>% rename(Stars_Business = stars.x, Stars_Users = 
 Yelp_Transform <- Yelp_Cleaned %>%
   mutate(Stars_Category = case_when(
     Stars_Business >= 0 & Stars_Business <= 3.5 ~ "low",
-    Stars_Business >= 3.6 & Stars_Business <= 5 ~ "high",
+    Stars_Business > 3.5 & Stars_Business <= 5 ~ "high",
     TRUE ~ NA_character_
   ))
 View(Yelp_Transform)
@@ -32,7 +32,7 @@ View(Yelp_Transform)
 #Inspection of NA's
 colSums(is.na(Yelp_Transform))
 #Drop NA only in crucial columns 
-Yelp_Transform <- Yelp_Transform %>% drop_na(categories, hours, business_id, Review, Stars_Business, Stars_Users)
+Yelp_Transform <- Yelp_Transform %>% drop_na(hours)
 
 #3. Data exploration and plotting 
 #Visualize with ggplot 
