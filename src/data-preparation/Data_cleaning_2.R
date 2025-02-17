@@ -36,3 +36,11 @@ Yelp_Transform <- Yelp_Transform %>% drop_na(hours)
 
 #3. Data exploration and plotting 
 #Visualize with ggplot 
+library(ggplot2)
+Yelp_Plotting <- Yelp_Transform %>% 
+  ggplot(aes(x = Stars_Category)) +
+  geom_bar(fill = "blue") +
+  labs(title = "Count of Star Categories",
+       x = "Stars Category",
+       y = "Count") 
+Yelp_Plotting
