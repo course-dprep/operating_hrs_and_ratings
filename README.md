@@ -32,68 +32,6 @@ The project can easily be followed along by this README.md file. In here an over
 
 **Include a tree diagram that illustrates the repository structure*
 
-## Dependencies 
-
-*Firstly, several packages are loaded into our Rstudio. 
-
-```{r}
-library(tidyverse)
-library(dplyr)
-library(here)
-library(stringr)
-```
-*
-
-## Running Instructions 
-
-*Four our research, we only need the business dataset and review dataset of Yelp, which we downloaded from https://business.yelp.com/data/resources/open-dataset/  
-
-```{r}
-Data_Bus <- read_csv(here("data", "yelp_academic_dataset_business.csv"))
-Data_Review <- read_csv(here("data","yelp_academic_dataset_review.csv"))
-```
-
-As both datasets contained a business_id variable, we merged them together by business_id.
-
-```{r}
-Data_Merged <- merge(Data_Bus, Data_Review, by = "business_id", all = TRUE)
-```
-
-We filtered the dataset on specific variables and conditions, to  make sure our hardware can process this large dataset. 
-
-We only look at categories which included "Restaurants", which are not permanently closed. Secondly, based on the median of review_count we only included businesses with more then, or equal to 135 reviews. Additionally, we only selected the variables needed, which is still subject to some changes regarding the implementation of potential control variables. 
-
-```{r}
-# Looking for a good minimal threshold of amount of reviews a business has. 
-summary(Data_Merged$review_count)
-
-# Checking the amount of reviews per state to check which state is suitable. 
-Data_Merged %>% count(state)
-
-# Filtering the data of the merged data set
-Data_Merged_Filtered <- Data_Merged %>% 
-  filter(str_detect(categories, "Restaurants"),
-         is_open == 1,
-         review_count >= 135,
-         state == "IL")%>% 
-  select(review_count, name, state, categories, hours, business_id, text, stars.x, stars.y, user_id)
-         
-  # renaming the star.x, star.y and text variables
-Data_Merged_Filtered <- Data_Merged_Filtered %>% 
-  rename(Stars_Business = stars.x, Stars_Users = stars.y, Review = text) 
-
-# Getting rid of the NA's
-Data_Merged_Filtered <- na.omit(Data_Merged_Filtered)
-```
-
-As we conduct a sentiment analysis, we need to make sure reviews have a sufficient length to be suitable for analysis. Therefore we filtered the amount of words to be greater then 10). 
-
-```{r}
- # Reviews >10 words. 
-Data_Merged_Final<- Data_Merged_Filtered %>% filter((str_count(Review, " ") + 1) > 10)
-```
-*
-
 ## About 
 
 This project is set up as part of the Master's course [Data Preparation & Workflow Management](https://dprep.hannesdatta.com/) at the [Department of Marketing](https://www.tilburguniversity.edu/about/schools/economics-and-management/organization/departments/marketing), [Tilburg University](https://www.tilburguniversity.edu/), the Netherlands.
