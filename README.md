@@ -98,4 +98,4 @@ Data_Merged_Final<- Data_Merged_Filtered %>% filter((str_count(Review, " ") + 1)
 
 This project is set up as part of the Master's course [Data Preparation & Workflow Management](https://dprep.hannesdatta.com/) at the [Department of Marketing](https://www.tilburguniversity.edu/about/schools/economics-and-management/organization/departments/marketing), [Tilburg University](https://www.tilburguniversity.edu/), the Netherlands.
 
-The project is implemented by team < x > members: < insert member details>
+The project is implemented by team 2 members: Tarn van Eijk, Vincent Riemslag, Isa Romeijn, Eline Sprenger, Isabel van Westeneng
