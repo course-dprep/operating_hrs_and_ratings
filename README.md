@@ -33,9 +33,6 @@ For sub question 1, our dependent variable is star rating. This will be a catego
 - Explain the relevance of these findings/product. 
 
 ## Deployment Information
-(The way of deployment (e.g., PDF report, dashboard, …) is
-useful and accessible to potential knowledge users, and
-clearly communicates the conclusions of the analysis.)
 The project can easily be followed along by this README.md file. In here an overview of our research is presented and the questions which will be answered. The code in this file can be ran in any Python supported software such as Jupyter notebook or Google colab. Following this document from top to bottom all necessary packages and data sets will be loaded. This document contains the code to create the shown graphs and excecute the statistical analysis. 
 
 ## Repository Overview 
