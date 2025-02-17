@@ -26,7 +26,7 @@ For sub question 1, our dependent variable is star rating. This will be a catego
 - Explain the relevance of these findings/product. 
 
 ## Deployment Information
-The project can easily be followed along by this README.md file. In here an overview of our research is presented and the questions which will be answered. The code in this file can be ran in any Python supported software such as Jupyter notebook or Google colab. Following this document from top to bottom all necessary packages and data sets will be loaded. This document contains the code to create the shown graphs and excecute the statistical analysis. 
+This project is easy to follow using an R Markdown document in the src folder. This document clearly presents the overview of our research, the research questions and the methodology. All the necessary packages are loaded and the datasets can be found in the data folder. The data is stored via Google Drive and can be opened using RStudio. The code to create the necessary visualisations and statistical analysis is also included.
 
 ## Repository Overview 
 
