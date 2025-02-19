@@ -18,6 +18,14 @@ Online reviews are becoming increasingly important in today's digital age, where
 ## Method
 For sub question 1, our dependent variable is star rating. This will be a categorical variable as we will them group into high star rating (4-5 stars) and low star rating (1-3 stars). The independent variable is opening hours, which is also categorical. The total amount of hours a restaurant is opened, will be counted. Two groups will be separated: high / low amount of opened hours. Because both the dependent variable star rating and the independent variable opening hours are categorical a binary logistic model will return the relationship and give predictability scores. For sub question 2, our dependent variable is the sentiment of customer reviews. This will be a categorical variable with 3 groups which have a natural order (negative \< neutral \< positive). The independent variable is opening hours, similar to question 1. An ordinal logistic regression model will be used for sub question 2. Customer reviews are categorized into 3 ordinal levels and opening hours into two levels. The result of this model will give the probabilities of sentiment levels based on the opening hours of a restaurant.
 
+### Variable table
+| Variable Name  | Description                                   | Type        | Operationalization                                      | Possible Values               |
+|---------------|-------------------------------------------|------------|--------------------------------------------------|------------------------------|
+| Star Rating   | Customer rating for the restaurant       | Categorical (Binary) | Grouped into High (4-5) and Low (1-3)         | High (4-5), Low (1-3)        |
+| Sentiment     | Sentiment of customer reviews           | Ordinal     | Categorized into Negative, Neutral, Positive  | Negative, Neutral, Positive  |
+| Opening Hours | Total hours restaurant is open          | Categorical (Binary) | Split into High and Low opening hours       | High, Low                    |
+
+
 ## Data
 
 ## Preview of Findings 
