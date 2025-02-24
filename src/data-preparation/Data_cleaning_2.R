@@ -75,10 +75,14 @@ Yelp_Transform <- Yelp_Transform %>%
 Yelp_Transform %>%
   count(Hours_category)
 
+Yelp_Transform <- Yelp_Transform %>% select(business_id, review_count, name, state, Stars_Business, categories, hours, user_id, Review, Stars_Users, Stars_Category, Open_hours)
+
 #Inspection of NA's
 colSums(is.na(Yelp_Transform))
-#Drop NA only in crucial columns 
+Yelp_Transform[is.na(Yelp_Transform$hours), ]
+#Drop NA's in the column hours - for those restaurants opening hours are not available 
 Yelp_Transform <- Yelp_Transform %>% drop_na(hours)
+colSums(is.na(Yelp_Transform))
 
 #3. Data exploration and plotting 
 #Visualize with ggplot 
