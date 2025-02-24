@@ -26,13 +26,63 @@ Yelp_Transform <- Yelp_Cleaned %>%
 View(Yelp_Transform)
 
 #For Opening hours category 
-#Write function 
-#Sentiment analysis
+extract_opening_hours <- function(Yelp_Transform, hours) {
+  days <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+  
+  for (day in days) {
+    day_col <- paste0(day, "_Hours")  # Kolomnaam bv. "Monday_Hours"
+    
+    Yelp_Transform <- Yelp_Transform %>%
+      mutate(
+        !!day_col := str_extract(!!sym(hours), paste0("'", day, "':\\s*'\\d{1,2}:\\d{1,2}-\\d{1,2}:\\d{1,2}'")),
+        !!day_col := str_remove_all(!!sym(day_col), paste0("'", day, "':\\s*'")),
+        !!day_col := str_remove_all(!!sym(day_col), "'")
+      ) %>%
+      separate(!!sym(day_col), into = c(paste0(day, "_Start"), paste0(day, "_End")), sep = "-", remove = FALSE) %>%
+      mutate(
+        !!paste0(day, "_Start") := as.numeric(str_extract(!!sym(paste0(day, "_Start")), "^\\d{1,2}")),
+        !!paste0(day, "_End") := as.numeric(str_extract(!!sym(paste0(day, "_End")), "^\\d{1,2}")),
+        !!paste0(day, "_Open_Hours") := ifelse(
+          !!sym(paste0(day, "_End")) < !!sym(paste0(day, "_Start")),
+          !!sym(paste0(day, "_End")) + 24 - !!sym(paste0(day, "_Start")),
+          !!sym(paste0(day, "_End")) - !!sym(paste0(day, "_Start"))
+        )
+      )
+  }
+  
+  return(Yelp_Transform)
+}
+
+Yelp_Transform <- extract_opening_hours(Yelp_Transform, "hours")
+Yelp_Transform <- Yelp_Transform %>%
+  mutate(Open_hours = rowSums(select(., Monday_Open_Hours, Tuesday_Open_Hours, Wednesday_Open_Hours, Thursday_Open_Hours, Friday_Open_Hours, Saturday_Open_Hours, Sunday_Open_Hours), na.rm = TRUE)
+  )
+
+Yelp_Transform <- Yelp_Transform %>% select(business_id, review_count, name, state, Stars_Business, categories, hours, user_id, Review, Stars_Users, Stars_Category, Monday_Open_Hours, Tuesday_Open_Hours, Wednesday_Open_Hours, Thursday_Open_Hours, Friday_Open_Hours, Saturday_Open_Hours, Sunday_Open_Hours, Open_hours)
+
+#To inspect the mean Open_Hours
+summary(Yelp_Transform)
+
+#Create variable that categorizes open_hours in low, middle, high 
+Yelp_Transform <- Yelp_Transform %>% 
+  mutate(Hours_category = case_when(
+    Open_hours >= 0 & Open_hours <= 55 ~ "low",
+    Open_hours > 55 & Open_hours <= 75 ~ "middle",
+    Open_hours > 75 ~ "high",
+    TRUE ~ NA_character_
+  ))
+
+Yelp_Transform %>%
+  count(Hours_category)
+
+Yelp_Transform <- Yelp_Transform %>% select(business_id, review_count, name, state, Stars_Business, categories, hours, user_id, Review, Stars_Users, Stars_Category, Open_hours)
 
 #Inspection of NA's
 colSums(is.na(Yelp_Transform))
-#Drop NA only in crucial columns 
+Yelp_Transform[is.na(Yelp_Transform$hours), ]
+#Drop NA's in the column hours - for those restaurants opening hours are not available 
 Yelp_Transform <- Yelp_Transform %>% drop_na(hours)
+colSums(is.na(Yelp_Transform))
 
 #3. Data exploration and plotting 
 #Visualize with ggplot 
