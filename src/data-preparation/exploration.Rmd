@@ -1,0 +1,34 @@
+---
+title: "exploration"
+author: "Tarn"
+date: "2025-03-12"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+library(tidyverse)
+
+# Loading the Yelp data
+Yelp <- read_csv("Yelp.csv")
+
+#1. Data Inspection 
+  View(Yelp)
+summary(Yelp)
+
+#Inspection of NA's
+colSums(is.na(Yelp))
+Yelp_Transform[is.na(Yelp$hours), ]
+
+# Plotting 
+library(ggplot2)
+Yelp_Plotting <- Yelp_Transform %>% 
+  ggplot(aes(x = Stars_Category)) +
+  geom_bar(fill = "blue") +
+  labs(title = "Count of Star Categories",
+       x = "Stars Category",
+       y = "Count") 
+Yelp_Plotting
+
