@@ -76,7 +76,7 @@ Yelp_clean <- Yelp_clean %>% drop_na(hours)
 colSums(is.na(Yelp_clean))
 
 # Preliminary csv file, since sentimental analysis is still under review. 
-write_csv(Yelp_clean, "Yelp_clean.csv")
+write_csv(Yelp_clean, "../gen/Yelp_clean.csv")
 
 
 
@@ -88,8 +88,7 @@ write_csv(Yelp_clean, "Yelp_clean.csv")
 
 
 
-
-
+#check if this is for analysis part or belongs here 
 
 
 #sentiment analysis
