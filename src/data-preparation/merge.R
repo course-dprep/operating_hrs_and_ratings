@@ -9,5 +9,5 @@ Sampled_Data_Review <- read_csv("Sampled_Data_Review.csv")
 Yelp <- merge(Sampled_Data_Business, Sampled_Data_Review, by = "business_id", all = TRUE)
 
 # Write a csv file for the merged dataset
-write_csv(Yelp, "../src/data-preparation/Yelp.csv")
+write_csv(Yelp, "../data/Yelp.csv")
 
