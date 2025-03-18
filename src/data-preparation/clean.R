@@ -3,7 +3,7 @@
 # Loading the necessary packages 
 
 # Loading the Yelp dataset 
-Yelp <- read_csv(here("data", "Yelp.csv"))
+Yelp <- read_csv(here("gen", "temp", "Yelp.csv"))
 
 # Filtering for Restaurants that are open
 Yelp_clean <- Yelp %>% filter(str_detect(categories, "Restaurants") & is_open == 1 & str_detect(text, "[a-zA-Z]"))
