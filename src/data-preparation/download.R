@@ -2,11 +2,13 @@
 install.packages("tidyverse")
 install.packages("googledrive")
 install.packages("httpuv")
+install.packages("here")
 
 # Loading the packages 
 library(tidyverse)
 library(googledrive)
 library(httpuv)
+library(here)
 
 # Authenticate Google Drive (Users may need to sign in)
 drive_auth()
@@ -19,15 +21,11 @@ file_ids <- c(
 
 # Define file names for saving
 file_names <- c(
-  "Sampled_Data_Business.csv",
-  "Sampled_Data_Review.csv"
- )
+  here("data", "Sampled_Data_Business.csv"),
+  here("data", "Sampled_Data_Review.csv")
+)
 
 # Loop through the files and download them
 for (i in seq_along(file_ids)) {
   drive_download(as_id(file_ids[i]), path = file_names[i], overwrite = TRUE)
 }
-
-
-
-

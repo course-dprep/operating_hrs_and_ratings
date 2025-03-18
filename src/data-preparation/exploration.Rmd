@@ -9,26 +9,34 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+```{r}
 library(tidyverse)
 
 # Loading the Yelp data
-Yelp <- read_csv("Yelp.csv")
-
+Yelp <- read_csv(here("gen", "temp", "Yelp.csv"))
+                 
 #1. Data Inspection 
-  View(Yelp)
+View(Yelp)
 summary(Yelp)
 
 #Inspection of NA's
 colSums(is.na(Yelp))
-Yelp_Transform[is.na(Yelp$hours), ]
 
 # Plotting 
 library(ggplot2)
-Yelp_Plotting <- Yelp_Transform %>% 
+Yelp_Plotting <- Yelp %>% 
   ggplot(aes(x = Stars_Category)) +
   geom_bar(fill = "blue") +
   labs(title = "Count of Star Categories",
        x = "Stars Category",
        y = "Count") 
+
 Yelp_Plotting
+
+```
+
+
+
+
 
