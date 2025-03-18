@@ -3,7 +3,7 @@
 # Loading the necessary packages 
 
 # Loading the Yelp dataset 
-Yelp <- read_csv("Yelp.csv")
+Yelp <- read_csv(here("data", "Yelp.csv"))
 
 # Filtering for Restaurants that are open
 Yelp_clean <- Yelp %>% filter(str_detect(categories, "Restaurants") & is_open == 1 & str_detect(text, "[a-zA-Z]"))
@@ -49,7 +49,8 @@ Yelp_clean <- Yelp_clean %>% select(business_id, review_count, name, state, star
 Yelp_clean <- extract_opening_hours(Yelp_clean, "hours")
 Yelp_clean <- Yelp_clean %>%
   mutate(Open_hours = rowSums(select(., Monday_Open_Hours, Tuesday_Open_Hours, Wednesday_Open_Hours, Thursday_Open_Hours, Friday_Open_Hours, Saturday_Open_Hours, Sunday_Open_Hours), na.rm = TRUE)
-  )
+  #Sometimes, the opening hours for a certain day misses and this becomes a NA. Means that the restaurant is closed on that day, so don't need to count this for opening hours. 
+         )
 
 Yelp_clean <- Yelp_clean %>% select(business_id, review_count, name, state, Stars_Business, categories, hours, user_id, Review, Stars_Users, Stars_Category, Open_hours)
 
@@ -68,20 +69,12 @@ Yelp_clean <- Yelp_clean %>%
 Yelp_clean %>%
   count(Hours_category)
 
-Yelp_clean <- Yelp_clean %>% select(business_id, review_count, name, state, Stars_Business, categories, hours, user_id, Review, Stars_Users, Stars_Category, Open_hours)
-
-
-#Drop NA's in the column hours - for those restaurants opening hours are not available 
-Yelp_clean <- Yelp_clean %>% drop_na(hours)
+#Drop NA's in the column hours - for restaurants of which no opening hours are not available 
 colSums(is.na(Yelp_clean))
+Yelp_clean <- Yelp_clean %>% drop_na(hours)
 
-# Preliminary csv file, since sentimental analysis is still under review. 
-write_csv(Yelp_clean, "../gen/Yelp_clean.csv")
-
-
-
-
-
+#Write csv file
+write_csv(Yelp_clean, here("gen", "output", "Yelp_clean.csv"))
 
 
 
