@@ -1,4 +1,131 @@
-# In this directory, you will keep all source code related to your analysis.
+# SUBQUESTION 1
+
+# Loading in the packages
+library(tidyverse)
+library(ggplot2)
+
+# Input: Loading in the cleaned dataset and attaching it.
+Yelp_clean <- read_csv("Yelp_clean.csv")
+attach(Yelp_clean)
+
+# Transforming into factors for analysis
+Yelp_clean$Stars_Category <- factor(Yelp_clean$Stars_Category, levels = c("low", "high"))
+Yelp_clean$Hours_category <- as.factor(Yelp_clean$Hours_category)
+Yelp_clean$state <- as.factor(Yelp_clean$state)
+glimpse(Yelp_clean)
+
+
+
+# First Model for answering the first subquestion: How are star ratings affected by the opening hours of restaurants?
+Model_Subquestion_1 <- glm(Stars_Category ~ Hours_category + review_count + state, 
+                                data = Yelp_clean, family = binomial)
+summary(Model_Subquestion_1)  
+exp(coef(Model_Subquestion_1))
+
+# Do the covariates improve the model fit? 
+reduced_model <- glm(Stars_Category ~ Hours_category,
+                     data = Yelp_clean, family = binomial)  # Remove review_count
+
+anova(reduced_model, Model_Subquestion_1, test = "Chisq")
+
+# Plot: Effect of Opening Hours on Probability of High Rating
+Yelp_clean$predicted_prob <- predict(Model_Subquestion_1, type = "response")
+ggplot(Yelp_clean, aes(x = Hours_category, y = predicted_prob)) +
+  geom_boxplot() +
+  labs(title = "Effect of Opening Hours on Probability of High Rating",
+       x = "Hours Category", 
+       y = "Predicted Probability of High Rating")
+
+### Checking the covariates
+
+# PLot: State-wise Differences in High Ratings
+ggplot(Yelp_clean, aes(x = state, y = predicted_prob)) +
+  geom_boxplot() +
+  labs(title = "State-wise Differences in High Ratings",
+       x = "State", 
+       y = "Predicted Probability of High Rating") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# Plot: Effect of Review Count on Probability of High Rating
+ggplot(Yelp_clean, aes(x = review_count, y = predicted_prob)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "loess", color = "blue") +
+  labs(title = "Effect of Review Count on Probability of High Rating",
+       x = "Review Count", 
+       y = "Predicted Probability of High Rating")
+
+
+# Linearity assumption
+ggplot(Yelp_clean, aes(x = review_count, y = log(predict(Model_Subquestion_1, type = "response") / (1 - predict(Model_Subquestion_1, type = "response"))))) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "loess", color = "blue") +
+  labs(title = "Checking Linearity: Review Count vs. Log-Odds",
+       x = "Review Count",
+       y = "Log-Odds of High Rating")
+
+# Independence 
+table(duplicated(Yelp_clean_aggregated$business_id))  # Count duplicate business IDs
+  
+
+
+
+library(dplyr)
+Yelp_clean_aggregated <- Yelp_clean %>%
+  group_by(business_id) %>%
+  summarise(
+    Stars_Category = first(Stars_Category),  
+    Hours_category = first(Hours_category),  
+    state = first(state),                    
+    review_count = first(review_count)       
+  ) %>%
+  ungroup()
+
+
+
+# SUBQUESTION 2
+
+# Load necessary packages
+install.packages("nnet")  # If not installed
+library(nnet)
+
+# Convert sentiment_category to a factor with "Neutral" as the reference
+Yelp_sentiment$sentiment_category <- factor(Yelp_sentiment$sentiment_category, 
+                                            levels = c("Neutral", "Negative", "Positive"))
+glimpse(Yelp_sentiment)
+
+# Run multinomial logistic regression with control variables
+model_multinom <- multinom(sentiment_category ~ Hours_category + review_count + state + Stars_Business, 
+                           data = Yelp_sentiment)
+
+# Display model summary
+summary(model_multinom)
+
+exp(coef(model_multinom))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #visualiseer sentiment
 Sentiment_scatterplot <- ggplot(yelp_sentiment, aes(x = sentiment_category, fill = sentiment_category)) +
