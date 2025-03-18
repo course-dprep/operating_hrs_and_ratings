@@ -10,5 +10,5 @@ Sampled_Data_Review <- read_csv(here("data", "Sampled_Data_Review.csv"))
 Yelp <- merge(Sampled_Data_Business, Sampled_Data_Review, by = "business_id", all = TRUE)
 
 # Write a csv file for the merged dataset
-write_csv(Yelp, here("data", "Yelp.csv"))
+write_csv(Yelp, here("gen", "temp", "Yelp.csv"))
 
