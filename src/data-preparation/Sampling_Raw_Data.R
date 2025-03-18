@@ -32,5 +32,5 @@ Sampled_Checking <- Data_Checking %>%
   semi_join(Sampled_Business, by = "business_id")
 
 # Writing the csv's
-write_csv(Sampled_Business, here("data", "Sampled_Data_Business.csv")
-write_csv(Sampled_Review, here("data","Sampled_Data_Review.csv")
+write_csv(Sampled_Business, "Sampled_Data_Business.csv")
+write_csv(Sampled_Review, "Sampled_Data_Review.csv")
