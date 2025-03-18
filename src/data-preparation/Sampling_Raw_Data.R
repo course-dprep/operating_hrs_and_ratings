@@ -8,9 +8,6 @@ library(dplyr)
 # Loading in the data sets
 Data_Reviews <- read_csv(here("yelp_academic_dataset_review.csv"))
 Data_Business <- read_csv(here("yelp_academic_dataset_business.csv"))
-Data_Checking <- read_csv(here("yelp_academic_dataset_checkin.csv"))
-Data_Tip <- read_csv(here("yelp_academic_dataset_tip.csv"))
-Data_User <- read_csv(here("yelp_academic_dataset_user.csv"))
 
 # Sample Business
 Sampled_Business <- Data_Business %>% 
@@ -37,6 +34,3 @@ Sampled_Checking <- Data_Checking %>%
 # Writing the csv's
 write_csv(Sampled_Business, "Sampled_Data_Business.csv")
 write_csv(Sampled_Review, "Sampled_Data_Review.csv")
-write_csv(Sampled_Tip, "Sampled_Data_Tip.csv")
-write_csv(Sampled_Checking, "Sampled_Data_Checkin.csv")
-
