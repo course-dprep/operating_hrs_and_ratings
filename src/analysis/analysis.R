@@ -1,75 +1,26 @@
-# SUBQUESTION 1
-
-# Loading in the packages
+# Load necessary libraries
 library(tidyverse)
 library(ggplot2)
+library(here)
+library(lmtest)
+library(sandwich)
+library(clubSandwich)
+library(car)
 
-# Input: Loading in the cleaned dataset and attaching it.
-Yelp_clean <- read_csv("Yelp_clean.csv")
-attach(Yelp_clean)
+# Load cleaned dataset
+Yelp_clean <- read_csv(here("gen", "output", "Yelp_clean.csv"))
 
-# Transforming into factors for analysis
-Yelp_clean$Stars_Category <- factor(Yelp_clean$Stars_Category, levels = c("low", "high"))
-Yelp_clean$Hours_category <- as.factor(Yelp_clean$Hours_category)
-Yelp_clean$state <- as.factor(Yelp_clean$state)
+# Converting variables to factors
+Yelp_clean$Hours_category <- factor(Yelp_clean$Hours_category, levels = c("low", "middle", "high"))
+Yelp_clean$Stars_Category <- factor(Yelp_clean$Stars_Category, levels = c("low", "high")) # Changing the class of Stars_Category into a factor.
+Yelp_clean$state <- as.factor(Yelp_clean$state) 
 glimpse(Yelp_clean)
 
+# --------------------------------------------------
+# Subquestion 1: Effect of Opening Hours on Star Ratings
+# --------------------------------------------------
 
-
-# First Model for answering the first subquestion: How are star ratings affected by the opening hours of restaurants?
-Model_Subquestion_1 <- glm(Stars_Category ~ Hours_category + review_count + state, 
-                                data = Yelp_clean, family = binomial)
-summary(Model_Subquestion_1)  
-exp(coef(Model_Subquestion_1))
-
-# Do the covariates improve the model fit? 
-reduced_model <- glm(Stars_Category ~ Hours_category,
-                     data = Yelp_clean, family = binomial)  # Remove review_count
-
-anova(reduced_model, Model_Subquestion_1, test = "Chisq")
-
-# Plot: Effect of Opening Hours on Probability of High Rating
-Yelp_clean$predicted_prob <- predict(Model_Subquestion_1, type = "response")
-ggplot(Yelp_clean, aes(x = Hours_category, y = predicted_prob)) +
-  geom_boxplot() +
-  labs(title = "Effect of Opening Hours on Probability of High Rating",
-       x = "Hours Category", 
-       y = "Predicted Probability of High Rating")
-
-### Checking the covariates
-
-# PLot: State-wise Differences in High Ratings
-ggplot(Yelp_clean, aes(x = state, y = predicted_prob)) +
-  geom_boxplot() +
-  labs(title = "State-wise Differences in High Ratings",
-       x = "State", 
-       y = "Predicted Probability of High Rating") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-# Plot: Effect of Review Count on Probability of High Rating
-ggplot(Yelp_clean, aes(x = review_count, y = predicted_prob)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method = "loess", color = "blue") +
-  labs(title = "Effect of Review Count on Probability of High Rating",
-       x = "Review Count", 
-       y = "Predicted Probability of High Rating")
-
-
-# Linearity assumption
-ggplot(Yelp_clean, aes(x = review_count, y = log(predict(Model_Subquestion_1, type = "response") / (1 - predict(Model_Subquestion_1, type = "response"))))) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method = "loess", color = "blue") +
-  labs(title = "Checking Linearity: Review Count vs. Log-Odds",
-       x = "Review Count",
-       y = "Log-Odds of High Rating")
-
-# Independence 
-table(duplicated(Yelp_clean_aggregated$business_id))  # Count duplicate business IDs
-  
-
-
-
-library(dplyr)
+# Aggregate data to ensure independent observations (one per restaurant)
 Yelp_clean_aggregated <- Yelp_clean %>%
   group_by(business_id) %>%
   summarise(
@@ -80,137 +31,154 @@ Yelp_clean_aggregated <- Yelp_clean %>%
   ) %>%
   ungroup()
 
+# Fit Logistic Regression Model
+logit_model <- glm(Stars_Category ~ Hours_category + review_count + state, 
+                   data = Yelp_clean_aggregated, family = binomial)
+summary(logit_model)  
+exp(coef(logit_model))  # Exponentiate coefficients for interpretation
+
+# Model comparison: checking if covariates improve model fit
+logit_reduced_model <- glm(Stars_Category ~ Hours_category,
+                           data = Yelp_clean_aggregated, family = binomial)  # Reduced model
+anova(logit_reduced_model, logit_model, test = "Chisq")
 
 
-# SUBQUESTION 2
+# ---------------------------
+# Assumption Checks
+# ---------------------------
 
-# Load necessary packages
-install.packages("nnet")  # If not installed
-library(nnet)
+# Linearity Check: Logit vs. Review Count
+Yelp_clean_aggregated %>%
+  mutate(logit = log(fitted(logit_model) / (1 - fitted(logit_model)))) %>%
+  ggplot(aes(x = review_count, y = logit)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "loess", color = "blue") +
+  labs(title = "Linearity Check: Logit vs. Review Count", 
+       x = "Review Count", 
+       y = "Logit (Log-Odds)")
 
-# Convert sentiment_category to a factor with "Neutral" as the reference
-Yelp_sentiment$sentiment_category <- factor(Yelp_sentiment$sentiment_category, 
-                                            levels = c("Neutral", "Negative", "Positive"))
-glimpse(Yelp_sentiment)
+# Multicollinearity Check (VIF)
+vif(lm(as.numeric(Stars_Category) ~ Hours_category + state + review_count, 
+       data = Yelp_clean_aggregated))
 
-# Run multinomial logistic regression with control variables
-model_multinom <- multinom(sentiment_category ~ Hours_category + review_count + state + Stars_Business, 
-                           data = Yelp_sentiment)
+# ---------------------------
+# Plots
+# ---------------------------
 
-# Display model summary
-summary(model_multinom)
-
-exp(coef(model_multinom))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#visualiseer sentiment
-Sentiment_scatterplot <- ggplot(yelp_sentiment, aes(x = sentiment_category, fill = sentiment_category)) +
-  geom_bar() +
+# Distribution of Star Ratings by Opening Hours Category
+star_rating_by_opening_hours<- ggplot(Yelp_clean_aggregated, aes(x = Hours_category, fill = Stars_Category)) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Distribution of Star Ratings by Opening Hours Category",
+    x = "Opening Hours Category",
+    y = "Count of Restaurants",
+    fill = "Star Category"
+  ) +
   theme_minimal() +
-  labs(title = "Sentimentanalyse van Yelp-reviews",
-       x = "Sentiment",
-       y = "Aantal reviews") +
-  scale_fill_manual(values = c("Negatief" = "red", "Neutraal" = "gray", "Positief" = "green"))
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 13),
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 11)
+  )
+ggsave(here("gen", "output", "star_rating_by_opening_hours.pdf"), plot = star_rating_by_opening_hours, width = 8, height = 6)
 
-#visualiseer sentiment vs star rating
-Realtionship_starrating_sentiment <- ggplot(yelp_sentiment, aes(x = Stars_Users, y = sentiment_score)) +
-  geom_point(alpha = 0.5, color = "blue") +
+# Predicted Probability of High Rating by Opening Hours Category
+predicted_probabilites <-ggplot(Yelp_clean_aggregated, aes(x = Hours_category, y = predict(logit_model, type = "response"), fill = Hours_category)) +
+  geom_boxplot(alpha = 0.7) +
+  scale_fill_manual(values = c("low" = "blue", "middle" = "red", "high" ="brown")) + 
+  labs(
+    title = "Predicted Probability of High Rating by Opening Hours Category",
+    x = "Opening Hours Category",
+    y = "Predicted Probability of High Rating"
+  ) +
   theme_minimal() +
-  labs(title = "Relation between Starrating and Sentiment Score",
-       x = "Star Rating ",
-       y = "Sentiment Score")
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 13),
+    legend.position = "none"
+  )
 
-#correlatie controleren
-cor(yelp_sentiment$sentiment_score, yelp_sentiment$Stars_Users, use = "complete.obs") #0.4
+ggsave(here("gen", "output", "predicted_probabilities.pdf"), plot = predicted_probabilites, width = 8, height = 6)
 
-#boxplot die laat zien hoe breed de sentimentscores binnen de starrating > veel overlap verklaart zwakke correlatie
-ggplot(yelp_sentiment, aes(x = factor(Stars_Users), y = sentiment_score)) +
-  geom_boxplot() +
+# --------------------------------------------------
+# Subquestion 2: Effect of Opening Hours on Sentiment Score
+# --------------------------------------------------
+
+# Fit OLS Model
+ols_model <- lm(sentiment_score ~ Hours_category + state + review_count, data = Yelp_clean)
+
+# Model comparison: checking if covariates improve model fit
+ols_reduced_model <- lm(sentiment_score ~ Hours_category, data = Yelp_clean)
+cat("Adjusted R² for Reduced Model:", summary(ols_reduced_model)$adj.r.squared, "\n")
+cat("Adjusted R² for Full Model:", summary(ols_model)$adj.r.squared, "\n")
+
+# ---------------------------
+# Assumption Checks
+# ---------------------------
+
+# Linearity: Residuals vs. Fitted Values Plot
+plot(predict(ols_model), residuals(ols_model),
+     xlab = "Predicted Sentiment Score",
+     ylab = "Residuals",
+     main = "Residuals vs. Fitted Values")
+abline(h = 0, col = "blue", lty = 2)  # Add horizontal reference line
+
+# Homoscedasticity Check (Breusch-Pagan Test)
+bptest(ols_model)
+
+# Normality Check (QQ Plot)
+qqnorm(residuals(ols_model))
+qqline(residuals(ols_model), col = "blue")
+
+# Independence Issue: Multiple reviews per restaurant detected
+# Addressing with robust clustered standard errors
+clustered_se <- vcovCL(ols_model, cluster = Yelp_clean$business_id, type = "HC3")
+
+# Summary with clustered standard errors
+coeftest(ols_model, vcov = clustered_se)
+
+# Multicollinearity Check (VIF)
+vif(ols_model)
+
+# ---------------------------
+# Plots
+# ---------------------------
+
+# Residuals vs Fitted values
+residuals_vs_fitted <- ggplot(data = Yelp_clean, aes(x = predict(ols_model), y = residuals(ols_model))) +
+  geom_point(alpha = 0.5, color = "orange") +  # Scatter points
+  geom_hline(yintercept = 0, linetype = "dashed", color = "black") +  
+  labs(
+    title = "Residuals vs. Predicted Sentiment Score",
+    x = "Predicted Sentiment Score",
+    y = "Residuals"
+  ) +
   theme_minimal() +
-  labs(title = "Rating of Sentiment by Star Rating",
-       x = "Star Rating",
-       y = "Sentiment Score")
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 13)
+  )
+ggsave(here("gen", "output", "residuals_vs_fitted.pdf"), plot = residuals_vs_fitted, width = 8, height = 6)
 
-#ander sentiment NCR (8 emoties; rijkere sentiment data)
-yelp_sentiment_nrc <- yelp_words %>%
-  inner_join(get_sentiments("nrc"), by = "word", relationship = "many-to-many") %>%  
-  count(Review_ID, sentiment) %>%  
-  spread(sentiment, n, fill = 0)
-
-#verdeling emoties per star rating; welke emoties het meest voorkomen per star rating
-Star_Rating_emotions <- yelp_sentiment_nrc %>%
-  left_join(Yelp_Transform %>% mutate(Review_ID = row_number()) %>% select(Review_ID, Stars_Users), by = "Review_ID") %>%
-  gather(key = "emotie", value = "aantal", -Review_ID, -Stars_Users) %>%
-  ggplot(aes(x = factor(Stars_Users), y = aantal, fill = emotie)) +
-  geom_bar(stat = "identity", position = "stack") +
+# Predicted sentiment scores by opening hours category
+predicted_sentiment_scores <- ggplot(Yelp_clean, aes(x = Hours_category, y = predict(ols_model), fill = Hours_category)) +
+  geom_boxplot(alpha = 0.7) +
+  scale_fill_manual(values = c("low" = "blue", "high" = "red", "middle" = "brown")) +  # Custom colors
+  labs(
+    title = "Predicted Sentiment Score by Opening Hours Category",
+    x = "Opening Hours Category",
+    y = "Predicted Sentiment Score"
+  ) +
   theme_minimal() +
-  labs(title = "number of emotion words per star rating",
-       x = "Star Rating",
-       y = "Number of emotiion words")
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 13),
+    legend.position = "none"  # Remove legend since color represents x-axis
+  )
 
-#correlatie emoties en sterren
-install.packages("corrr")
-library(corrr)  
-
-# Voeg sterrenbeoordeling toe aan het sentiment dataframe
-yelp_sentiment_nrc <- yelp_sentiment_nrc %>%
-  left_join(Yelp_Transform %>% mutate(Review_ID = row_number()) %>% select(Review_ID, Stars_Users), by = "Review_ID")
-
-# correlatie hoge star rating en emoties
-cor_matrix <- yelp_sentiment_nrc %>%
-  select(-Review_ID) %>%  
-  correlate()  
-
-cor_matrix %>% focus(Stars_Users) %>% arrange(desc(Stars_Users))
-
-library(broom)
-
-#logistische regression
-yelp_sentiment_nrc <- yelp_sentiment_nrc %>%
-  mutate(stars_binary = ifelse(Stars_Users >= 4, 1, 0))  # 1 = Hoge score (4-5), 0 = Lage score (1-3)
-
-logit_model <- glm(stars_binary ~ ., data = yelp_sentiment_nrc %>% select(-Review_ID, -Stars_Users), 
-                   family = binomial)
-
-summary(logit_model)
-
-# dataframe van de regressieresultaten
-logit_results <- broom::tidy(logit_model)
-
-# Filter alleen de significante emoties (p < 0.05)
-significant_logit <- logit_results %>% filter(p.value < 0.05)
-
-# Plot de significante emoties
-ggplot(significant_logit, aes(x = reorder(term, estimate), y = estimate, fill = estimate > 0)) +
-  geom_bar(stat = "identity") +
-  coord_flip() +
-  theme_minimal() +
-  labs(title = "Significant emotions that influence star ratings (logistic model)",
-       x = "Emotion",
-       y = "Effect on chance of high rating") +
-  scale_fill_manual(values = c("red", "blue"), name = "Effect",
-                    labels = c("Negative", "Positive"))
+ggsave(here("gen", "output", "predicted_sentiment_scores.pdf"), plot = predicted_sentiment_scores, width = 8, height = 6)
