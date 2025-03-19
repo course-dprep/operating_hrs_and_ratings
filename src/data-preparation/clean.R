@@ -22,18 +22,13 @@ Yelp_clean <- Yelp %>% filter(str_detect(categories, "Restaurants") & is_open ==
 summary(Yelp_clean)
          
 #2. Data cleaning & Transformation
-Yelp_clean <- Yelp_clean %>% select(business_id, review_count, name, state, stars.x, state, categories, hours, user_id, text, stars.y)  %>% #Dropping columns 
+Yelp_clean <- Yelp_clean %>% select(business_id, review_count, name, stars.x, state, categories, hours, user_id, text, stars.y)  %>% #Dropping columns 
     rename(Stars_Business = stars.x, Stars_Users = stars.y, Review = text) %>% #Renaming star.x, star.y and text variables
     mutate(Stars_Category = case_when(
     Stars_Business >= 0 & Stars_Business <= 3.5 ~ "low",
     Stars_Business > 3.5 & Stars_Business <= 5 ~ "high",
     TRUE ~ NA_character_
   )) # Add Star Rating category 
-
-Yelp_clean$Stars_Category <- factor(Yelp_clean$Stars_Category, levels = c("low", "high")) # Changing the class of Stars_Category into a factor.
-class(Yelp_clean$Stars_Category)
-Yelp_clean$state <- as.factor(Yelp_clean$state) # Changing the class of state into a factor
-glimpse(Yelp_clean)
 
 # ADD OPENING HOURS VARIABLE 
 #First, drop NA's in the column hours - for these businesses there are no opening hours available
@@ -113,45 +108,62 @@ Yelp_clean %>%
 colSums(is.na(Yelp_clean))
 Yelp_clean <- Yelp_clean %>% drop_na(hours)
 
-#Write csv file
+# Sentiment Analysis
+
+# Load the AFINN sentiment lexicon
+afinn <- get_sentiments("afinn")
+
+# Assign unique Review_ID
+Yelp_clean <- Yelp_clean %>%
+  mutate(Review_ID = row_number())
+
+# Tokenize words separately without modifying Yelp_clean
+Yelp_sentiment <- Yelp_clean %>%
+  select(Review_ID, Review) %>%
+  unnest_tokens(word, Review)
+
+# Assign sentiment scores to words
+Yelp_sentiment <- Yelp_sentiment %>%
+  inner_join(afinn, by = "word") %>%
+  group_by(Review_ID) %>%
+  summarise(sentiment_score = sum(value, na.rm = TRUE), .groups = "drop")
+
+# **Ensure all reviews are retained by adding missing reviews with sentiment_score = 0**
+Yelp_sentiment <- Yelp_clean %>%
+  select(Review_ID) %>%
+  left_join(Yelp_sentiment, by = "Review_ID") %>%
+  mutate(sentiment_score = replace_na(sentiment_score, 0))  # Fill missing scores with 0
+
+# Merge back into Yelp_clean
+Yelp_clean <- Yelp_clean %>%
+  left_join(Yelp_sentiment, by = "Review_ID") %>%
+  select(-Review_ID)  # Remove temporary Review_ID
+
+glimpse(Yelp_clean)
+
+# Save the updated dataset
 write_csv(Yelp_clean, here("gen", "output", "Yelp_clean.csv"))
 
 
-# MAKING A NEW DATASET INCLUDING SENTIMENT FOR FURTHRE SENTIMENTAL ANALYSIS 
 
-#Load the AFINN sentiment lexicon
-afinn <- get_sentiments("afinn")
 
-# Tokenize each review into individual words while keeping a unique Review_ID
-Yelp_sentiment <- Yelp_clean %>%
-  select(Review) %>%  
-  mutate(Review_ID = row_number()) %>%  
-  unnest_tokens(word, Review)  
 
-# Assign sentiment scores to words and calculate total sentiment per review
-Yelp_sentiment <- Yelp_sentiment %>%
-  inner_join(afinn, by = "word") %>%  
-  group_by(Review_ID) %>%  
-  summarise(sentiment_score = sum(value, na.rm = TRUE), .groups = "drop")  
 
-# Merge Hours_category, state and review_count into the dataset
-Yelp_sentiment <- Yelp_sentiment %>%
-  left_join(Yelp_clean %>% mutate(Review_ID = row_number()) %>% select(Review_ID, Hours_category, review_count, state), by = "Review_ID")
 
-# Categorize sentiment scores into three classes (Negative, Neutral, Positive)
-Yelp_sentiment <- Yelp_sentiment %>%
-  mutate(sentiment_category = case_when(
-    sentiment_score < -1 ~ "Negative",  
-    sentiment_score > 1  ~ "Positive",  
-    TRUE                 ~ "Neutral"    
-  ))
 
-# Changing the sentiment_category class into factor with neutral as reference. 
-Yelp_sentiment$sentiment_category <- factor(Yelp_sentiment$sentiment_category, levels = c("Neutral", "Positive", "Negative"))
-glimpse(Yelp_sentiment)
 
-#Write csv file
-write_csv(Yelp_sentiment, here("gen", "output", "Yelp_sentiment.csv"))
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
