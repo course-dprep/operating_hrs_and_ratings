@@ -1,7 +1,6 @@
 # Installing the necessary packages
 install.packages("tidytext")
 install.packages("dplyr")
-install.packages("ggplot2")
 install.packages("textdata")
 install.packages("here")
 install.packages("tidyverse")
@@ -10,7 +9,6 @@ install.packages("stringr")
 # Loading the necessary packages 
 library(tidytext)
 library(dplyr)
-library(ggplot2)
 library(textdata)
 library(here)
 library(tidyverse)
@@ -24,7 +22,7 @@ Yelp_clean <- Yelp %>% filter(str_detect(categories, "Restaurants") & is_open ==
 summary(Yelp_clean)
          
 #2. Data cleaning & Transformation
-Yelp_clean <- Yelp_clean %>% select(business_id, review_count, name, state, stars.x, state, categories, hours, user_id, text, stars.y)  %>% #Dropping columns 
+Yelp_clean <- Yelp_clean %>% select(business_id, review_count, name, stars.x, state, categories, hours, user_id, text, stars.y)  %>% #Dropping columns 
     rename(Stars_Business = stars.x, Stars_Users = stars.y, Review = text) %>% #Renaming star.x, star.y and text variables
     mutate(Stars_Category = case_when(
     Stars_Business >= 0 & Stars_Business <= 3.5 ~ "low",
@@ -106,42 +104,72 @@ Yelp_clean <- Yelp_clean %>%
 Yelp_clean %>%
   count(Hours_category)
 
-# Sentimental Analysis
-afinn <- get_sentiments("afinn")
-
-#verwerk tekst met berekenen sentiment-score
-yelp_words <- Yelp_Transform %>%
-  select(Review, Stars_Users) %>%  # Behoud de reviewtekst én sterrenbeoordelingen
-  mutate(Review_ID = row_number()) %>%  # Voeg een unieke ID toe voor zekerheid
-  unnest_tokens(word, Review)  # Splits de tekst in woorden, behoud de andere kolommen
-
-#sentiment-score PER REVIEW
-yelp_sentiment <- yelp_words %>%
-  inner_join(afinn, by = "word") %>%  
-  group_by(Review_ID) %>%  # Groepeer per Review_ID (niet Review!)
-  summarise(sentiment_score = sum(value, na.rm = TRUE), .groups = "drop") %>%
-  left_join(Yelp_Transform %>% mutate(Review_ID = row_number()) %>% select(Review_ID, Stars_Users), by = "Review_ID")  # Voeg sterren toe
-
-#check 
-head(yelp_sentiment)
-
-#categoriseren
-yelp_sentiment <- yelp_sentiment %>%
-  mutate(sentiment_category = case_when(
-    sentiment_score < -1 ~ "Negatief",
-    sentiment_score > 1  ~ "Positief",
-    TRUE                 ~ "Neutraal"
-  ))
-
-#check
-table(yelp_sentiment$sentiment_category)
-
 #Drop NA's in the column hours - for restaurants of which no opening hours are not available 
 colSums(is.na(Yelp_clean))
 Yelp_clean <- Yelp_clean %>% drop_na(hours)
 
-#Write csv file
+# Sentiment Analysis
+
+# Load the AFINN sentiment lexicon
+afinn <- get_sentiments("afinn")
+
+# Assign unique Review_ID
+Yelp_clean <- Yelp_clean %>%
+  mutate(Review_ID = row_number())
+
+# Tokenize words separately without modifying Yelp_clean
+Yelp_sentiment <- Yelp_clean %>%
+  select(Review_ID, Review) %>%
+  unnest_tokens(word, Review)
+
+# Assign sentiment scores to words
+Yelp_sentiment <- Yelp_sentiment %>%
+  inner_join(afinn, by = "word") %>%
+  group_by(Review_ID) %>%
+  summarise(sentiment_score = sum(value, na.rm = TRUE), .groups = "drop")
+
+# **Ensure all reviews are retained by adding missing reviews with sentiment_score = 0**
+Yelp_sentiment <- Yelp_clean %>%
+  select(Review_ID) %>%
+  left_join(Yelp_sentiment, by = "Review_ID") %>%
+  mutate(sentiment_score = replace_na(sentiment_score, 0))  # Fill missing scores with 0
+
+# Merge back into Yelp_clean
+Yelp_clean <- Yelp_clean %>%
+  left_join(Yelp_sentiment, by = "Review_ID") %>%
+  select(-Review_ID)  # Remove temporary Review_ID
+
+glimpse(Yelp_clean)
+
+# Save the updated dataset
 write_csv(Yelp_clean, here("gen", "output", "Yelp_clean.csv"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
