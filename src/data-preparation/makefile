@@ -2,7 +2,10 @@ TEMP = ../../gen/temp
 OUTPUT = ../../gen/output
 DATA = ../../data
 
-First rule: $(OUTPUT)/Yelp_clean.csv $(OUTPUT)/data_exploration.pdf
+First rule: $(OUTPUT)/Yelp_clean_aggregated.csv $(OUTPUT)/data_exploration.pdf 
+
+$(OUTPUT)/Yelp_clean_aggregated.csv: aggregated.R $(OUTPUT)/Yelp_clean.csv
+	Rscript aggregated.R
 
 $(OUTPUT)/Yelp_clean.csv: clean.R $(TEMP)/Yelp.csv
 	Rscript clean.R
