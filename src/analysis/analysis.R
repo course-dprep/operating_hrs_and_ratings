@@ -1,3 +1,8 @@
+install.packages("lmtest")
+install.packages("sandwich")
+install.packages("clubSandwich")
+
+
 # Load necessary libraries
 library(tidyverse)
 library(ggplot2)
@@ -7,29 +12,17 @@ library(sandwich)
 library(clubSandwich)
 library(car)
 
-# Load cleaned dataset
-Yelp_clean <- read_csv(here("gen", "output", "Yelp_clean.csv"))
-
-# Converting variables to factors
-Yelp_clean$Hours_category <- factor(Yelp_clean$Hours_category, levels = c("low", "middle", "high"))
-Yelp_clean$Stars_Category <- factor(Yelp_clean$Stars_Category, levels = c("low", "high")) # Changing the class of Stars_Category into a factor.
-Yelp_clean$state <- as.factor(Yelp_clean$state) 
-glimpse(Yelp_clean)
-
 # --------------------------------------------------
 # Subquestion 1: Effect of Opening Hours on Star Ratings
 # --------------------------------------------------
+# Load aggregated dataset
+Yelp_clean_aggregated <- read_csv(here("gen", "output", "Yelp_clean_aggregated.csv"))
 
-# Aggregate data to ensure independent observations (one per restaurant)
-Yelp_clean_aggregated <- Yelp_clean %>%
-  group_by(business_id) %>%
-  summarise(
-    Stars_Category = first(Stars_Category),  
-    Hours_category = first(Hours_category),  
-    state = first(state),                    
-    review_count = first(review_count)       
-  ) %>%
-  ungroup()
+# Converting variables to factors
+Yelp_clean_aggregated$Hours_category <- factor(Yelp_clean_aggregated$Hours_category, levels = c("low", "middle", "high"))
+Yelp_clean_aggregated$Stars_Category <- factor(Yelp_clean_aggregated$Stars_Category, levels = c("low", "high")) # Changing the class of Stars_Category into a factor.
+Yelp_clean_aggregated$state <- as.factor(Yelp_clean_aggregated$state) 
+glimpse(Yelp_clean_aggregated)
 
 # Fit Logistic Regression Model
 logit_model <- glm(Stars_Category ~ Hours_category + review_count + state, 
@@ -107,6 +100,15 @@ ggsave(here("gen", "output", "predicted_probabilities.pdf"), plot = predicted_pr
 # Subquestion 2: Effect of Opening Hours on Sentiment Score
 # --------------------------------------------------
 
+# Load cleaned dataset
+Yelp_clean <- read_csv(here("gen", "output", "Yelp_clean.csv"))
+
+# Converting variables to factors
+Yelp_clean$Hours_category <- factor(Yelp_clean$Hours_category, levels = c("low", "middle", "high"))
+Yelp_clean$Stars_Category <- factor(Yelp_clean$Stars_Category, levels = c("low", "high")) # Changing the class of Stars_Category into a factor.
+Yelp_clean$state <- as.factor(Yelp_clean$state) 
+glimpse(Yelp_clean)
+
 # Fit OLS Model
 ols_model <- lm(sentiment_score ~ Hours_category + state + review_count, data = Yelp_clean)
 
@@ -162,6 +164,9 @@ residuals_vs_fitted <- ggplot(data = Yelp_clean, aes(x = predict(ols_model), y =
     axis.text = element_text(size = 12),
     axis.title = element_text(size = 13)
   )
+
+residuals_vs_fitted
+
 ggsave(here("gen", "output", "residuals_vs_fitted.pdf"), plot = residuals_vs_fitted, width = 8, height = 6)
 
 # Predicted sentiment scores by opening hours category
