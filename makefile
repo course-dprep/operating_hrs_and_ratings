@@ -1,4 +1,4 @@
-First rule: analyis data-preparation
+all: analyis data-preparation
 
 data-preparation:
 	make -C src/data-preparation
