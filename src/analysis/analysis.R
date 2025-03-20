@@ -1,7 +1,7 @@
 install.packages("lmtest")
 install.packages("sandwich")
 install.packages("clubSandwich")
-
+install.packages("gridExtra")
 
 # Load necessary libraries
 library(tidyverse)
@@ -11,6 +11,7 @@ library(lmtest)
 library(sandwich)
 library(clubSandwich)
 library(car)
+library(gridExtra)
 
 # --------------------------------------------------
 # Subquestion 1: Effect of Opening Hours on Star Ratings
@@ -30,11 +31,14 @@ logit_model <- glm(Stars_Category ~ Hours_category + review_count + state,
 summary(logit_model)  
 exp(coef(logit_model))  # Exponentiate coefficients for interpretation
 
+
 # Model comparison: checking if covariates improve model fit
 logit_reduced_model <- glm(Stars_Category ~ Hours_category,
                            data = Yelp_clean_aggregated, family = binomial)  # Reduced model
 anova(logit_reduced_model, logit_model, test = "Chisq")
 
+table_RQ1 <- tableGrob(summary(logit_reduced_model)$coefficients)
+ggsave(here("gen", "output", "table_RQ1.png"), table_RQ1, width = 10, height = 4, dpi = 300)
 
 # ---------------------------
 # Assumption Checks
@@ -75,7 +79,7 @@ star_rating_by_opening_hours<- ggplot(Yelp_clean_aggregated, aes(x = Hours_categ
     legend.title = element_text(size = 12),
     legend.text = element_text(size = 11)
   )
-ggsave(here("gen", "output", "star_rating_by_opening_hours.pdf"), plot = star_rating_by_opening_hours, width = 8, height = 6)
+ggsave(here("gen", "output", "star_rating_by_opening_hours.png"), plot = star_rating_by_opening_hours, width = 8, height = 6)
 
 # Predicted Probability of High Rating by Opening Hours Category
 predicted_probabilites <-ggplot(Yelp_clean_aggregated, aes(x = Hours_category, y = predict(logit_model, type = "response"), fill = Hours_category)) +
@@ -94,7 +98,7 @@ predicted_probabilites <-ggplot(Yelp_clean_aggregated, aes(x = Hours_category, y
     legend.position = "none"
   )
 
-ggsave(here("gen", "output", "predicted_probabilities.pdf"), plot = predicted_probabilites, width = 8, height = 6)
+ggsave(here("gen", "output", "predicted_probabilities.png"), plot = predicted_probabilites, width = 8, height = 6)
 
 # --------------------------------------------------
 # Subquestion 2: Effect of Opening Hours on Sentiment Score
@@ -116,6 +120,9 @@ ols_model <- lm(sentiment_score ~ Hours_category + state + review_count, data = 
 ols_reduced_model <- lm(sentiment_score ~ Hours_category, data = Yelp_clean)
 cat("Adjusted R² for Reduced Model:", summary(ols_reduced_model)$adj.r.squared, "\n")
 cat("Adjusted R² for Full Model:", summary(ols_model)$adj.r.squared, "\n")
+
+table_RQ2 <- tableGrob(summary(ols_reduced_model)$coefficients)
+ggsave(here("gen", "output", "table_RQ2.png"), table_RQ2, width = 10, height = 4, dpi = 300)
 
 # ---------------------------
 # Assumption Checks
@@ -167,7 +174,7 @@ residuals_vs_fitted <- ggplot(data = Yelp_clean, aes(x = predict(ols_model), y =
 
 residuals_vs_fitted
 
-ggsave(here("gen", "output", "residuals_vs_fitted.pdf"), plot = residuals_vs_fitted, width = 8, height = 6)
+ggsave(here("gen", "output", "residuals_vs_fitted.png"), plot = residuals_vs_fitted, width = 8, height = 6)
 
 # Predicted sentiment scores by opening hours category
 predicted_sentiment_scores <- ggplot(Yelp_clean, aes(x = Hours_category, y = predict(ols_model), fill = Hours_category)) +
@@ -186,4 +193,4 @@ predicted_sentiment_scores <- ggplot(Yelp_clean, aes(x = Hours_category, y = pre
     legend.position = "none"  # Remove legend since color represents x-axis
   )
 
-ggsave(here("gen", "output", "predicted_sentiment_scores.pdf"), plot = predicted_sentiment_scores, width = 8, height = 6)
+ggsave(here("gen", "output", "predicted_sentiment_scores.png"), plot = predicted_sentiment_scores, width = 8, height = 6)
