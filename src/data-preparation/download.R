@@ -1,3 +1,5 @@
+options(repos = c(CRAN = "https://cloud.r-project.org/"))
+
 # Installing the latest versions of the packages
 install.packages("tidyverse")
 install.packages("googledrive")
@@ -10,8 +12,8 @@ library(googledrive)
 library(httpuv)
 library(here)
 
-# Authenticate Google Drive (Users may need to sign in)
-drive_auth()
+# De activating authentication for make file
+drive_deauth()
 
 # Define the Google Drive file IDs
 file_ids <- c(
@@ -29,3 +31,4 @@ file_names <- c(
 for (i in seq_along(file_ids)) {
   drive_download(as_id(file_ids[i]), path = file_names[i], overwrite = TRUE)
 }
+

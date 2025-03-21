@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(tidyverse)
+library(here)
 
 # Loading the Yelp data
 Yelp <- read_csv(here("gen", "temp", "Yelp.csv"))
@@ -23,16 +24,7 @@ summary(Yelp)
 #Inspection of NA's
 colSums(is.na(Yelp))
 
-# Plotting 
-library(ggplot2)
-Yelp_Plotting <- Yelp %>% 
-  ggplot(aes(x = Stars_Category)) +
-  geom_bar(fill = "blue") +
-  labs(title = "Count of Star Categories",
-       x = "Stars Category",
-       y = "Count") 
 
-Yelp_Plotting
 
 ```
 

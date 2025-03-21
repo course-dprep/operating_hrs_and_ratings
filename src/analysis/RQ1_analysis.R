@@ -1,3 +1,5 @@
+options(repos = c(CRAN = "https://cloud.r-project.org/"))
+
 install.packages("tidyverse")
 install.packages("ggplot2")
 install.packages("here")
@@ -37,8 +39,8 @@ logit_reduced_model <- glm(Stars_Category ~ Hours_category,
                            data = Yelp_clean_aggregated, family = binomial)  # Reduced model
 anova(logit_reduced_model, logit_model, test = "Chisq")
 
-table_RQ1 <- tableGrob(summary(logit_reduced_model)$coefficients)
-ggsave(here("gen", "output", "table_RQ1.png"), table_RQ1, width = 10, height = 4, dpi = 300)
+table_RQ1 <- tableGrob(summary(logit_model)$coefficients)
+ggsave(here("gen", "output", "table_RQ1.png"), table_RQ1, width = 10, height = 8, dpi = 300)
 
 # ---------------------------
 # Assumption Checks

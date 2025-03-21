@@ -1,4 +1,5 @@
-<<<<<<< HEAD
+options(repos = c(CRAN = "https://cloud.r-project.org/"))
+
 install.packages("tidyverse")
 install.packages("ggplot2")
 install.packages("here")
@@ -39,9 +40,6 @@ ols_reduced_model <- lm(sentiment_score ~ Hours_category, data = Yelp_clean)
 cat("Adjusted R² for Reduced Model:", summary(ols_reduced_model)$adj.r.squared, "\n")
 cat("Adjusted R² for Full Model:", summary(ols_model)$adj.r.squared, "\n")
 
-table_RQ2 <- tableGrob(summary(ols_reduced_model)$coefficients)
-ggsave(here("gen", "output", "table_RQ2.png"), table_RQ2, width = 10, height = 4, dpi = 300)
-
 # ---------------------------
 # Assumption Checks
 # ---------------------------
@@ -65,7 +63,9 @@ qqline(residuals(ols_model), col = "blue")
 clustered_se <- vcovCL(ols_model, cluster = Yelp_clean$business_id, type = "HC3")
 
 # Summary with clustered standard errors
-coeftest(ols_model, vcov = clustered_se)
+table_RQ2 <- tableGrob(coeftest(ols_model, vcov = clustered_se))
+
+ggsave(here("gen", "output", "table_RQ2.png"), table_RQ2, width = 10, height = 8, dpi = 300)
 
 # Multicollinearity Check (VIF)
 vif(ols_model)
