@@ -1,2 +1,7 @@
 *.csv
 *.pdf
+*.Rhistory
+*.Rproj
+*.RData
+*.Rds
+.Rproj.user/
