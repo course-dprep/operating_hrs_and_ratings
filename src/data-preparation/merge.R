@@ -1,3 +1,7 @@
+#Install packages
+install.packages("tidyverse")
+install.packages("here")
+
 # Loading packages 
 library(tidyverse)
 library(here)
@@ -11,4 +15,3 @@ Yelp <- merge(Sampled_Data_Business, Sampled_Data_Review, by = "business_id", al
 
 # Write a csv file for the merged dataset
 write_csv(Yelp, here("gen", "temp", "Yelp.csv"))
-
