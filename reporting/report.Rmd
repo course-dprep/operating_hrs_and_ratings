@@ -15,39 +15,67 @@ install.packages("fixest")
 library(fixest)
 ```
 
-## Introduction 
-Online reviews are becoming increasingly important in today's digital age, where word of mouth is no longer limited to knowledge circles. In many cases, new customers rely on other customers' reviews to choose restaurants. Highly positive reviews increase conversion rates, while negative reviews discourage purchases. Restaurants should therefore be aware of how online reviews reflect their performance. Customers specifically leave reviews based on multiple dimensions of their experience, including star ratings and sentiment through text. A restaurant's opening hours, which can vary widely depending on location and type of service, among other factors, can influence the reviews and sentiments expressed by customers. This quantitative study will look at how restaurant hours affect the reviews given by customers. Therefore, the central research question of this study is: 
-*How are customer reviews affected by the opening hours of restaurants in the United States?*
-This will be answered by answering the following sub-questions: 
-1. *How are star ratings affected by the opening hours of restaurants?*
-2. *How is the sentiment of customer reviews affected by the opening hours of restaurants?*
+## Introduction
+
+Online reviews are becoming increasingly important in today's digital age, where word of mouth is no longer limited to knowledge circles. In many cases, new customers rely on other customers' reviews to choose restaurants. Highly positive reviews increase conversion rates, while negative reviews discourage purchases. Restaurants should therefore be aware of how online reviews reflect their performance. Customers specifically leave reviews based on multiple dimensions of their experience, including star ratings and sentiment through text. A restaurant's opening hours, which can vary widely depending on location and type of service, among other factors, can influence the reviews and sentiments expressed by customers. This quantitative study will look at how restaurant hours affect the reviews given by customers. Therefore, the central research question of this study is: *How are customer reviews affected by the opening hours of restaurants in the United States?* This will be answered by answering the following sub-questions: 1. *How are star ratings affected by the opening hours of restaurants?* 2. *How is the sentiment of customer reviews affected by the opening hours of restaurants?*
 
 ## Hypothesis
 
-## Cleaning 
+## Cleaning
 
 ## Method
-For sub question 1, our dependent variable is business star rating, which is the average star rating of all customers reviews for one business. This will be a categorical variable as we will them group into high star rating (4-5 stars) and low star rating (1-3 stars). The independent variable is opening hours, which is also categorical as it is separated into three groups: high, middle and low amount of hours opened. The variabel 'Open_hours' that is the total amount of hours opened a week, will be created by counting the opened hours of a restaurant for each day. Because both the dependent variable star rating and the independent variable opening hours are categorical a logistic regression model will return the relationship and give predictability scores. 
 
-For sub question 2, our dependent variable is the sentiment of customer reviews. This will be a continuous variable with a sentiment score, which represents the overall emotional tone of a review by summing the individual sentiment values of words. The more positive the sentiment score, the more positive the sentiment in a review, and the other way around. The independent variable is opening hours with three groups (low, middle, high), similar to question 1. An ordinal logistic regression model will be used for sub question 2. The result of this model will give the probabilities of sentiment levels based on the opening hours of a restaurant.
+For **sub-question 1**, we analyzed the relationship between restaurant opening hours and business star ratings using a logistic regression model.
+
+The dependent variable, `Stars_Category`, is a binary classification:
+
+-   High star rating (4–5 stars)\
+-   Low star rating (1–3 stars)
+
+The main predictor, `Hours_category`, represents restaurant opening hours, categorized into three groups: high, middle, and low opening hours.
+
+Additionally, we included two covariates:\
+\
+- `review_count`: The total number of reviews a restaurant has received, accounting for variations in customer engagement.\
+- `state`: The geographical location of the restaurant, controlling for regional differences.
+
+To assess whether the covariates (`review_count` and `state`) improved model performance, we conducted a likelihood ratio test comparing the full model (including covariates) with a reduced model containing only `Hours_category` as the independent variable.
+
+The results of this test indicate that the full model provides a significantly better fit than the reduced model. The Chi-square statistic is 99.148, with a p-value \< 0.001, meaning the likelihood of obtaining this result under the null hypothesis (that the covariates do not contribute to the model) is extremely low. This provides strong evidence that including `review_count` and `state` improves model performance.
+
+The final logistic regression equation is:
+
+Before interpreting the results, we assessed whether the assumptions of logistic regression were met. We tested for the linearity of the logit for the continuous predictor (`review_count`) and absence of multicollinearity among predictors. Linearity was checked by plotting log-odds against `review_count`, while multicollinearity was assessed using Variance Inflation Factors (VIF).
+
+For **sub-question 2**, we examined how restaurant opening hours influence the sentiment of customer reviews by fitting an OLS regression model.
+
+The dependent variable, `sentiment_score`, is a continuous variable representing the overall emotional tone of a review. The sentiment score is computed by summing the individual sentiment values of words in the review, where higher values indicate more positive sentiment and lower values indicate more negative sentiment.
+
+The main predictor is `Hours_category`.
+
+Additionally, we included the same two covariates as in sub-question 1: `review_count` and `state`.
+
+Just like with sub-question 1, we conducted a model comparison between a full model (including covariates) and a reduced model (only including `Hours_category`). This was evaluated using Adjusted R².
+
+The results show that the adjusted R² for the reduced model is 0.0113, while for the full model, the adjusted R² increases to 0.0225. While a 1% increase may seem small, it is actually quite meaningful in sentiment analysis, where sentiment scores are influenced by many unpredictable factors, such as personal writing styles and the way people express emotions in text. In studies like this, even small improvements in explanatory power can be significant. Therefore, the full model is kept as the best choice for analyzing the effect of restaurant opening hours on sentiment scores.
+
+The final OLS regression equation is:
 
 ### Variable table
-| Variable Name  | Description                                   | Type        | Operationalization                                      | Possible Values               |
-|---------------|-------------------------------------------|------------|--------------------------------------------------|------------------------------|
-| Star Rating   | Average star rating for the restaurant       | Categorical (Binary) | Grouped into High (4-5) and Low (1-3)         | High, Low        |
-| Sentiment     | Sentiment score of customer reviews           | Continuous     | Overall emotional tone of a review  | Numbers from -... to ...  |
-| Opening Hours | Total hours restaurant is open          | Ordinal | 0-55 = low, 56-75 = middle, 76+ = high      | Low, middle, high                   |
 
-## Checking assumptions 
+| Variable Name | Description                            | Type                 | Operationalization                     | Possible Values          |
+|---------------|---------------|---------------|---------------|---------------|
+| Star Rating   | Average star rating for the restaurant | Categorical (Binary) | Grouped into High (4-5) and Low (1-3)  | High, Low                |
+| Sentiment     | Sentiment score of customer reviews    | Continuous           | Overall emotional tone of a review     | Numbers from -... to ... |
+| Opening Hours | Total hours restaurant is open         | Ordinal              | 0-55 = low, 56-75 = middle, 76+ = high | Low, middle, high        |
 
-add the pdf's (or png) of the plots
-../../gen/output/ ... correct name
+## Checking assumptions
+
+add the pdf's (or png) of the plots ../../gen/output/ ... correct name\
 
 ## Results
 
-table with significance
+table with significance\
+\
 
-
-## Conclusion 
-
-
+## Conclusion

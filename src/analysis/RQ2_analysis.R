@@ -44,37 +44,7 @@ cat("Adjusted R² for Full Model:", summary(ols_model)$adj.r.squared, "\n")
 # Assumption Checks
 # ---------------------------
 
-# Linearity: Residuals vs. Fitted Values Plot
-plot(predict(ols_model), residuals(ols_model),
-     xlab = "Predicted Sentiment Score",
-     ylab = "Residuals",
-     main = "Residuals vs. Fitted Values")
-abline(h = 0, col = "blue", lty = 2)  # Add horizontal reference line
-
-# Homoscedasticity Check (Breusch-Pagan Test)
-bptest(ols_model)
-
-# Normality Check (QQ Plot)
-qqnorm(residuals(ols_model))
-qqline(residuals(ols_model), col = "blue")
-
-# Independence Issue: Multiple reviews per restaurant detected
-# Addressing with robust clustered standard errors
-clustered_se <- vcovCL(ols_model, cluster = Yelp_clean$business_id, type = "HC3")
-
-# Summary with clustered standard errors
-table_RQ2 <- tableGrob(coeftest(ols_model, vcov = clustered_se))
-
-ggsave(here("gen", "output", "table_RQ2.png"), table_RQ2, width = 10, height = 8, dpi = 300)
-
-# Multicollinearity Check (VIF)
-vif(ols_model)
-
-# ---------------------------
-# Plots
-# ---------------------------
-
-# Residuals vs Fitted values
+# Linearity Check
 residuals_vs_fitted <- ggplot(data = Yelp_clean, aes(x = predict(ols_model), y = residuals(ols_model))) +
   geom_point(alpha = 0.5, color = "orange") +  # Scatter points
   geom_hline(yintercept = 0, linetype = "dashed", color = "black") +  
@@ -90,9 +60,31 @@ residuals_vs_fitted <- ggplot(data = Yelp_clean, aes(x = predict(ols_model), y =
     axis.title = element_text(size = 13)
   )
 
-residuals_vs_fitted
-
 ggsave(here("gen", "output", "residuals_vs_fitted.png"), plot = residuals_vs_fitted, width = 8, height = 6)
+
+# Homoscedasticity Check (Breusch-Pagan Test)
+bptest(ols_model)
+
+# Normality Check (QQ Plot)
+qqnorm(residuals(ols_model))
+qqline(residuals(ols_model), col = "blue")
+png(here("gen", "output", "QQ_Plot.png")); qqnorm(residuals(ols_model)); qqline(residuals(ols_model), col = "blue"); dev.off()
+
+# Independence Issue: Multiple reviews per restaurant detected
+# Addressing with robust clustered standard errors
+clustered_se <- vcovCL(ols_model, cluster = Yelp_clean$business_id, type = "HC3")
+
+# Summary with clustered standard errors
+table_RQ2 <- tableGrob(coeftest(ols_model, vcov = clustered_se))
+ggsave(here("gen", "output", "table_RQ2.png"), table_RQ2, width = 10, height = 8, dpi = 300)
+
+# Multicollinea rity Check (VIF)
+VIF_RQ2 <- tableGrob(vif(ols_model))
+ggsave(here("gen", "output", "VIF_RQ2.png"), VIF_RQ2, width = 8, height = 4, dpi = 300)
+
+# ---------------------------
+# Additional Plots
+# ---------------------------
 
 # Predicted sentiment scores by opening hours category
 predicted_sentiment_scores <- ggplot(Yelp_clean, aes(x = Hours_category, y = predict(ols_model), fill = Hours_category)) +
