@@ -1,34 +1,74 @@
 ---
-title: "exploration"
+title: "Raw Data Exploration"
 author: "Tarn"
 date: "2025-03-12"
-output: pdf_document
+output: 
+  pdf_document:
+    latex_engine: xelatex
+
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-```
-
-
-```{r}
 library(tidyverse)
 library(here)
+library(skimr)
+library(ggplot2)
+```
 
+## Loading in the data
+
+After downloading the sampled_raw_data files and merging them, we can load in the complete raw dataset.
+
+```{r, message=FALSE, warning=FALSE}
 # Loading the Yelp data
 Yelp <- read_csv(here("gen", "temp", "Yelp.csv"))
-                 
-#1. Data Inspection 
-View(Yelp)
-summary(Yelp)
+```
 
-#Inspection of NA's
-colSums(is.na(Yelp))
+## Overview
 
+Before starting into analysis, we start with a general exploration of the dataset. This allows us to understand its structure, identify potential issues such as missing values or inconsistent formatting, and to discover the types of variables included.
 
+We begin by inspecting the structure of the data using `glimpse()` and summarizing each variable with `skim()`, which provides a compact summary including data types, number of missing values, and key distributional statistics.
+
+```{r}
+# Basic structure
+glimpse(Yelp)
+
+# Summary statistics and checking for missing values
+skim(Yelp)
+```
+
+## Generating initial plots
+
+```{r, echo = FALSE, warning = FALSE}
+ggplot(Yelp, aes(x = state)) +
+  geom_bar(fill = "lightblue", color = "black") +
+  labs(title = "Number of Businesses by State", x = "State", y = "Count") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 ```
 
+```{r, echo = FALSE}
+ggplot(Yelp, aes(x = review_count)) +
+  geom_histogram(binwidth = 50, fill = "darkorange", color = "black") +
+  labs(title = "Distribution of Review Counts", x = "Review Count", y = "Frequency") +
+  scale_x_continuous(limits = c(0, 1000)) 
 
+```
 
+```{r, echo = FALSE}
+ggplot(Yelp, aes(x = as.factor(stars.x))) +
+  geom_bar(fill = "lightgreen", color = "black") +
+  labs(title = "Distribution of Business Star Ratings", x = "Stars", y = "Count")
 
+```
 
+```{r, echo = FALSE}
+ggplot(Yelp, aes(x = as.factor(is_open))) +
+  geom_bar(fill = "cyan", color = "black") +
+  labs(title = "Count of Open vs. Closed Businesses", x = "Open (1=Yes, 0=No)", y = "Count")
+
+```

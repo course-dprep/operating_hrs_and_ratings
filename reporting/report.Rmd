@@ -9,7 +9,7 @@ Authors: "Tarn van Eijk, Vincent Riemslag, Isa Romeijn, Isabel van Westeneng"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r, echo = FALSE, include = FALSE}
 options(repos = c(CRAN = "https://cloud.r-project.org/"))
 install.packages("fixest")
 library(fixest)
@@ -18,10 +18,6 @@ library(fixest)
 ## Introduction
 
 Online reviews are becoming increasingly important in today's digital age, where word of mouth is no longer limited to knowledge circles. In many cases, new customers rely on other customers' reviews to choose restaurants. Highly positive reviews increase conversion rates, while negative reviews discourage purchases. Restaurants should therefore be aware of how online reviews reflect their performance. Customers specifically leave reviews based on multiple dimensions of their experience, including star ratings and sentiment through text. A restaurant's opening hours, which can vary widely depending on location and type of service, among other factors, can influence the reviews and sentiments expressed by customers. This quantitative study will look at how restaurant hours affect the reviews given by customers. Therefore, the central research question of this study is: *How are customer reviews affected by the opening hours of restaurants in the United States?* This will be answered by answering the following sub-questions: 1. *How are star ratings affected by the opening hours of restaurants?* 2. *How is the sentiment of customer reviews affected by the opening hours of restaurants?*
-
-## Hypothesis
-
-## Cleaning
 
 ## Method
 
@@ -37,11 +33,10 @@ The main predictor, `Hours_category`, represents restaurant opening hours, categ
 Additionally, we included two covariates:\
 \
 - `review_count`: The total number of reviews a restaurant has received, accounting for variations in customer engagement.\
+\
 - `state`: The geographical location of the restaurant, controlling for regional differences.
 
 To assess whether the covariates (`review_count` and `state`) improved model performance, we conducted a likelihood ratio test comparing the full model (including covariates) with a reduced model containing only `Hours_category` as the independent variable.
-
-The results of this test indicate that the full model provides a significantly better fit than the reduced model. The Chi-square statistic is 99.148, with a p-value \< 0.001, meaning the likelihood of obtaining this result under the null hypothesis (that the covariates do not contribute to the model) is extremely low. This provides strong evidence that including `review_count` and `state` improves model performance.
 
 The final logistic regression equation is:
 
@@ -57,25 +52,62 @@ Additionally, we included the same two covariates as in sub-question 1: `review_
 
 Just like with sub-question 1, we conducted a model comparison between a full model (including covariates) and a reduced model (only including `Hours_category`). This was evaluated using Adjusted R².
 
-The results show that the adjusted R² for the reduced model is 0.0113, while for the full model, the adjusted R² increases to 0.0225. While a 1% increase may seem small, it is actually quite meaningful in sentiment analysis, where sentiment scores are influenced by many unpredictable factors, such as personal writing styles and the way people express emotions in text. In studies like this, even small improvements in explanatory power can be significant. Therefore, the full model is kept as the best choice for analyzing the effect of restaurant opening hours on sentiment scores.
-
 The final OLS regression equation is:
+
+Before interpreting the results, we assessed whether the assumptions of OLS regression were met. We tested for the linearity by plotting the residuals against the fitted values. We also performed tests for homoscedasticity and normality. Since Yelp_clean is used for sub-question 2 instead of Yelp_clean_aggregated, multicollinearity among predictors is once again tested.
 
 ### Variable table
 
-| Variable Name | Description                            | Type                 | Operationalization                     | Possible Values          |
+| Variable Name   | Description                                | Type                 | Operationalization                            | Possible Values             |
 |---------------|---------------|---------------|---------------|---------------|
-| Star Rating   | Average star rating for the restaurant | Categorical (Binary) | Grouped into High (4-5) and Low (1-3)  | High, Low                |
-| Sentiment     | Sentiment score of customer reviews    | Continuous           | Overall emotional tone of a review     | Numbers from -... to ... |
-| Opening Hours | Total hours restaurant is open         | Ordinal              | 0-55 = low, 56-75 = middle, 76+ = high | Low, middle, high        |
+| Star_Category   | Average star rating for the restaurant     | Categorical (Binary) | Grouped into High (4-5) and Low (1-3)         | High, Low                   |
+| sentiment_score | Sentiment score of customer reviews        | Continuous           | Overall emotional tone of a review            | Numbers from -64 to 136     |
+| Hours_category  | Total hours restaurant is open             | Ordinal              | 0-55 = low, 56-75 = middle, 76+ = high        | Low, middle, high           |
+| review_count    | Total number of reviews for a restaurant   | Continuous           | Count of all reviews received by a restaurant | Numbers from 5 to 4,876     |
+| state           | U.S. state where the restaurant is located | Categorical          | Two-letter state abbreviation                 | Any U.S. state abbreviation |
 
 ## Checking assumptions
 
-add the pdf's (or png) of the plots ../../gen/output/ ... correct name\
+Before interpreting the regression results, we tested whether the key assumptions for logistic and OLS regression were met.
+
+### Sub-question 1
+
+For the logistic regression model, we first examined the linearity of the logit for the continuous predictor, `review_count`. This assumption was tested by plotting the log-odds of the dependent variable (`Star_Category`) against `review_count`. The resulting plot, as shown in Figure 1, suggests an approximately linear trend, confirming that the assumption of linearity is satisfied.
+
+![Figure 1: Logit vs. Review Count](../gen/output/Logit_reviewcount.png)
+
+To assess multicollinearity among the predictors, we computed Variance Inflation Factors (VIF). The results, displayed in Figure 2, show that all predictors have acceptable VIF values, confirming that multicollinearity is not a concern in our logistic regression model.
+
+![Figure 2: Variance Inflation Factors (VIF) for Yelp_clean_aggregated](../gen/output/VIF_table_RQ1.png)
+
+For the OLS regression model, we tested the assumption of linearity by examining residual plots. A residuals vs. predicted values plot, presented in Figure 3, was used to detect systematic patterns in residuals. The absence of clear trends suggests that the assumption of linearity holds.
+
+We also compared the full model (including covariates) with a reduced model containing only `Hours_category` as the independent variable with a likelihood ratio test.The results of this test indicate that the full model provides a significantly better fit than the reduced model. The Chi-square statistic is 99.148, with a p-value \< 0.001, meaning the likelihood of obtaining this result under the null hypothesis (that the covariates do not contribute to the model) is extremely low. This provides strong evidence that including `review_count` and `state` improves model performance.
+
+### Sub-question 2
+
+![Figure 3: Residuals vs Predicted Sentiment Score](../gen/output/residuals_vs_fitted.png)
+
+Normality of residuals was assessed using a quantile-quantile (QQ) plot, displayed in Figure 4. The QQ plot indicates that the residuals follow an approximately normal distribution, supporting the normality assumption of OLS regression.
+
+![Figure 4: QQ-Plot](../gen/output/QQ_Plot.png)
+
+Multicollinearity was also evaluated for the OLS model using VIF. The results, shown in Figure 5, confirm that all predictors fall within acceptable VIF ranges, indicating that collinearity does not pose a significant issue.
+
+![Variance Inflation Factors (VIF) for Yelp_clean](../gen/output/VIF_RQ2.png)
+
+Finally, we conducted a model comparison between a full model (including covariates) and a reduced model (only including `Hours_category`). The results show that the adjusted R² for the reduced model is 0.0113, while for the full model, the adjusted R² increases to 0.0225. While a 1% increase may seem small, it is actually quite meaningful in sentiment analysis, where sentiment scores are influenced by many unpredictable factors, such as personal writing styles and the way people express emotions in text. In studies like this, even small improvements in explanatory power can be significant. Therefore, the full model is kept as the best choice for analyzing the effect of restaurant opening hours on sentiment scores.
 
 ## Results
 
-table with significance\
-\
+![Distribution of Star Ratings by Opening Hours Category](../gen/output/star_rating_by_opening_hours.png)
+
+![Predicted Probability of High Rating by Opening Hours Category](../gen/output/predicted_probabilities.png)
+
+![Logistic Regression Output Table](../gen/output/table_RQ1.png)
+
+![Predicted Sentiment Score by Opening Hours Category](../gen/output/predicted_sentiment_scores.png)
+
+![OLS Regression Output Table](../gen/output/table_RQ2.png)
 
 ## Conclusion
