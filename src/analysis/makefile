@@ -3,10 +3,10 @@ OUTPUT = ../../gen/output
 all: $(OUTPUT)/table_RQ1.png $(OUTPUT)/star_rating_by_opening_hours.png $(OUTPUT)/predicted_probabilities.png $(OUTPUT)/table_RQ2.png $(OUTPUT)/residuals_vs_fitted.png $(OUTPUT)/predicted_sentiment_scores.png
 
 $(OUTPUT)/Yelp_clean_aggregated.csv: 
-	make -C ../data-preparation -f Makefile first 
+	make -C ../data-preparation -f Makefile all 
 
 $(OUTPUT)/Yelp_clean.csv:
-	make -C ../data-preparation -f Makefile first 
+	make -C ../data-preparation -f Makefile all 
 
 $(OUTPUT)/table_RQ1.png $(OUTPUT)/star_rating_by_opening_hours.png $(OUTPUT)/predicted_probabilities.png: RQ1_analysis.r $(OUTPUT)/Yelp_clean_aggregated.csv
 	Rscript RQ1_analysis.R
