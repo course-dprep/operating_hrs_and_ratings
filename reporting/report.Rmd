@@ -1,2 +1,38 @@
-# You can use this file (or similar ones) to work on a report. 
-# Of course, you need to replace them with actual RMarkdown files eventually.
+---
+title: "report"
+output: pdf_document
+date: "2025-03-20"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+#library packages
+
+```
+
+## Hypothesis
+
+....
+
+
+## Type of analysis
+
+...
+
+## Checking assumptions 
+
+add the pdf's (or png) of the plots
+../../gen/output/ ... correct name
+
+## Results
+
+table with significance
+
+
+## Conclusion 
+
+
