@@ -47,7 +47,7 @@ ggsave(here("gen", "output", "table_RQ1.png"), table_RQ1, width = 10, height = 8
 # ---------------------------
 
 # Linearity Check: Logit vs. Review Count
-Yelp_clean_aggregated %>%
+Logit_reviewcount <- Yelp_clean_aggregated %>%
   mutate(logit = log(fitted(logit_model) / (1 - fitted(logit_model)))) %>%
   ggplot(aes(x = review_count, y = logit)) +
   geom_point(alpha = 0.5) +
@@ -56,12 +56,17 @@ Yelp_clean_aggregated %>%
        x = "Review Count", 
        y = "Logit (Log-Odds)")
 
+ggsave(here("gen", "output", "Logit_reviewcount.png"), plot = Logit_reviewcount, width = 8, height = 6)
+
 # Multicollinearity Check (VIF)
-vif(lm(as.numeric(Stars_Category) ~ Hours_category + state + review_count, 
+VIF_RQ1 <- vif(lm(as.numeric(Stars_Category) ~ Hours_category + state + review_count, 
        data = Yelp_clean_aggregated))
 
+VIF_table_RQ1<- tableGrob(VIF_RQ1)
+ggsave(here("gen", "output", "VIF_table_RQ1.png"), VIF_table_RQ1, width = 8, height = 4, dpi = 300)
+
 # ---------------------------
-# Plots
+# Additional Plots
 # ---------------------------
 
 # Distribution of Star Ratings by Opening Hours Category
