@@ -1,3 +1,5 @@
+options(repos = c(CRAN = "https://cloud.r-project.org/"))
+
 # Installing the necessary packages
 install.packages("tidytext")
 install.packages("dplyr")
@@ -110,6 +112,7 @@ Yelp_clean <- Yelp_clean %>% drop_na(hours)
 
 # Sentiment Analysis
 
+Sys.setenv("R_INTERACTIVE" = "false")
 # Load the AFINN sentiment lexicon
 afinn <- get_sentiments("afinn")
 
