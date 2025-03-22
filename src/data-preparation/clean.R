@@ -112,8 +112,8 @@ Yelp_clean <- Yelp_clean %>% drop_na(hours)
 
 # Sentiment Analysis
 
-Sys.setenv("R_INTERACTIVE" = "false")
 # Load the AFINN sentiment lexicon
+textdata::download_lexicon_afinn()
 afinn <- get_sentiments("afinn")
 
 # Assign unique Review_ID
