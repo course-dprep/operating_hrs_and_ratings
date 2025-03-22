@@ -1,8 +1,11 @@
 ---
 title: "Effect of opening hours on Review's star rating and sentiment"
-output: pdf_document
+output:
+  word_document: default
+  html_document:
+    df_print: paged
 date: "2025-03-20"
-Authors: "Tarn van Eijk, Vincent Riemslag, Isa Romeijn, Isabel van Westeneng"
+Authors: Tarn van Eijk, Vincent Riemslag, Isa Romeijn, Isabel van Westeneng
 ---
 
 ```{r setup, include=FALSE}
@@ -40,7 +43,7 @@ To assess whether the covariates (`review_count` and `state`) improved model per
 
 The final logistic regression equation is:
 
-Before interpreting the results, we assessed whether the assumptions of logistic regression were met. We tested for the linearity of the logit for the continuous predictor (`review_count`) and absence of multicollinearity among predictors. Linearity was checked by plotting log-odds against `review_count`, while multicollinearity was assessed using Variance Inflation Factors (VIF).
+Before interpreting the results, we assessed whether the assumptions of logistic regression were met. We tested for the linearity of the logit for the continuous predictor (`review_count`) and absence of multicollinearity among predictors. Linearity was checked by plotting log-odds against `review_count`, while multicollinearity was assessed using Variance Inflation Factors (VIF). The assumption of independence of observations is addressed by using the `Yelp_clean_aggregated dataset`, which includes only one observation per restaurant. This approach is justified because the variables of interest do not vary across multiple reviews for the same restaurant.
 
 For **sub-question 2**, we examined how restaurant opening hours influence the sentiment of customer reviews by fitting an OLS regression model.
 
@@ -54,7 +57,7 @@ Just like with sub-question 1, we conducted a model comparison between a full mo
 
 The final OLS regression equation is:
 
-Before interpreting the results, we assessed whether the assumptions of OLS regression were met. We tested for the linearity by plotting the residuals against the fitted values. We also performed tests for homoscedasticity and normality. Since Yelp_clean is used for sub-question 2 instead of Yelp_clean_aggregated, multicollinearity among predictors is once again tested.
+Before interpreting the results, we assessed whether the assumptions of OLS regression were met. We tested for the linearity by plotting the residuals against the fitted values. We also performed tests for homoscedasticity and normality. Since multiple reviews per restaurant are retained in the analysis, standard errors are clustered at the restaurant level to account for potential non-independence. As the `Yelp_clean` dataset is used for sub-question 2 instead of `Yelp_clean_aggregated`, multicollinearity among independent variables is re-evaluated.
 
 ### Variable table
 
@@ -74,40 +77,68 @@ Before interpreting the regression results, we tested whether the key assumption
 
 For the logistic regression model, we first examined the linearity of the logit for the continuous predictor, `review_count`. This assumption was tested by plotting the log-odds of the dependent variable (`Star_Category`) against `review_count`. The resulting plot, as shown in Figure 1, suggests an approximately linear trend, confirming that the assumption of linearity is satisfied.
 
-![Figure 1: Logit vs. Review Count](../gen/output/Logit_reviewcount.png)
+![*Logit vs. Review Count*](../gen/output/Logit_reviewcount.png){width="400"}
 
 To assess multicollinearity among the predictors, we computed Variance Inflation Factors (VIF). The results, displayed in Figure 2, show that all predictors have acceptable VIF values, confirming that multicollinearity is not a concern in our logistic regression model.
 
-![Figure 2: Variance Inflation Factors (VIF) for Yelp_clean_aggregated](../gen/output/VIF_table_RQ1.png)
-
-For the OLS regression model, we tested the assumption of linearity by examining residual plots. A residuals vs. predicted values plot, presented in Figure 3, was used to detect systematic patterns in residuals. The absence of clear trends suggests that the assumption of linearity holds.
+![*Variance Inflation Factors (VIF) for Yelp_clean_aggregated*](../gen/output//VIF_table_RQ1.png){width="400"}
 
 We also compared the full model (including covariates) with a reduced model containing only `Hours_category` as the independent variable with a likelihood ratio test.The results of this test indicate that the full model provides a significantly better fit than the reduced model. The Chi-square statistic is 99.148, with a p-value \< 0.001, meaning the likelihood of obtaining this result under the null hypothesis (that the covariates do not contribute to the model) is extremely low. This provides strong evidence that including `review_count` and `state` improves model performance.
 
 ### Sub-question 2
 
-![Figure 3: Residuals vs Predicted Sentiment Score](../gen/output/residuals_vs_fitted.png)
+For the OLS regression model, we tested the assumption of linearity by examining residual plots. A residuals vs. predicted values plot, presented in Figure 3, was used to detect systematic patterns in residuals. The absence of clear trends suggests that the assumption of linearity holds.
+
+![*Residuals vs Predicted Sentiment Score*](../gen/output/residuals_vs_fitted.png){width="400"}
 
 Normality of residuals was assessed using a quantile-quantile (QQ) plot, displayed in Figure 4. The QQ plot indicates that the residuals follow an approximately normal distribution, supporting the normality assumption of OLS regression.
 
-![Figure 4: QQ-Plot](../gen/output/QQ_Plot.png)
+![*QQ-Plot*](../gen/output/QQ_Plot.png){width="400"}
 
-Multicollinearity was also evaluated for the OLS model using VIF. The results, shown in Figure 5, confirm that all predictors fall within acceptable VIF ranges, indicating that collinearity does not pose a significant issue.
+Multicollinearity was also re-evaluated for the OLS model using VIF. The results, shown in Figure 5, confirm that all predictors fall within acceptable VIF ranges, indicating that collinearity does not pose a significant issue.
 
-![Variance Inflation Factors (VIF) for Yelp_clean](../gen/output/VIF_RQ2.png)
+![*Variance Inflation Factors (VIF) for Yelp_clean*](../gen/output/VIF_RQ2.png){width="400"}
 
 Finally, we conducted a model comparison between a full model (including covariates) and a reduced model (only including `Hours_category`). The results show that the adjusted R² for the reduced model is 0.0113, while for the full model, the adjusted R² increases to 0.0225. While a 1% increase may seem small, it is actually quite meaningful in sentiment analysis, where sentiment scores are influenced by many unpredictable factors, such as personal writing styles and the way people express emotions in text. In studies like this, even small improvements in explanatory power can be significant. Therefore, the full model is kept as the best choice for analyzing the effect of restaurant opening hours on sentiment scores.
 
 ## Results
 
-![Distribution of Star Ratings by Opening Hours Category](../gen/output/star_rating_by_opening_hours.png)
+### Sub-question 1
 
-![Predicted Probability of High Rating by Opening Hours Category](../gen/output/predicted_probabilities.png)
+Figure 6 displays the distribution of star ratings across the three opening hours categories. A higher proportion of restaurants with low opening hours received high star ratings, while restaurants in the high opening hours category were more frequently associated with low star ratings. This visual pattern suggests a negative relationship between opening hours and star ratings.
 
-![Logistic Regression Output Table](../gen/output/table_RQ1.png)
+![*Distribution of Star Ratings by Opening Hours Category*](../gen/output/star_rating_by_opening_hours.png){width="400"}
 
-![Predicted Sentiment Score by Opening Hours Category](../gen/output/predicted_sentiment_scores.png)
+As shown in Figure 7, the logistic regression confirms the visual findings. Compared to restaurants with low opening hours, the odds of receiving a high star rating are 68% lower for restaurants with middle opening hours and 85% lower for those with high opening hours. These results indicate a strong negative relationship between longer opening hours and the likelihood of receiving a high rating.
 
-![OLS Regression Output Table](../gen/output/table_RQ2.png)
+Among the control variables, the number of reviews a restaurant has received is also negatively associated with high ratings, although the effect is relatively small. Every extra review is associated with a slight decrease in the odds of receiving a high rating. Differences across states were controlled for in the model, but most state-level effects were not statistically significant at the 5% level.
+
+![*Logistic Regression Output Table*](../gen/output/table_RQ1.png){width="400"}
+
+To illustrate the practical implications of the model, Figure 8 presents the predicted probabilities of receiving a high star rating across the three opening hours categories. Restaurants with low opening hours have the highest predicted probability of receiving a high rating, followed by those in the middle category. Restaurants with high opening hours have the lowest predicted probability. These results visually reinforce the negative relationship between longer opening hours and customer ratings found in the regression analysis.
+
+![*Predicted Probability of High Rating by Opening Hours Category*](../gen/output/predicted_probabilities.png){width="400"}
+
+### Sub-question 2
+
+Figure 9 displays the results of the OLS regression analysis. Compared to restaurants with low opening hours, sentiment scores are on average 1.40 points lower for restaurants with middle opening hours, and 2.13 points lower for those with high opening hours. These effects are statistically significant and indicate that longer opening hours are associated with more negatively worded reviews.
+
+Among the covariates, review count has a small but statistically significant positive effect, suggesting that restaurants with more reviews tend to receive slightly more positive sentiment on average. Several state-level effects were also significant which indicates regional variation in sentiment scores.
+
+![*OLS Regression Output Table*](../gen/output/table_RQ2.png){width="400"}
+
+To illustrate the practical implications of these results, Figure 10 shows the predicted sentiment scores by opening hours category. The trend is visually clear as it confirms that restaurants with low opening hours are associated with the highest predicted sentiment, while those with high opening hours have the lowest. This visualization states the conclusion that longer operating hours are linked to more negative sentiment in customer reviews.
+
+![*Predicted Sentiment Score by Opening Hours Category*](../gen/output/predicted_sentiment_scores.png){width="400"}
 
 ## Conclusion
+
+The results show a clear and consistent pattern; longer opening hours are associated with less favorable customer reviews. Specifically, restaurants with longer hours were significantly less likely to receive high star ratings and were also associated with lower sentiment scores in review text. These effects held after controlling for the number of reviews and state-level differences, and they were statistically significant across both models.
+
+While the effect sizes for review sentiment were relatively small, they are meaningful within the context of sentiment analysis. The consistency across both quantitative ratings (stars) and qualitative ratings (review sentiment), strengthens the conclusion that extended operating hours may negatively influence how customers perceive and review their restaurant experiences.
+
+One possible reason for this finding is that longer opening hours might put more pressure on staff make service less consistent, or lead to lower-quality experiences during off-peak times. These possibilities could be explored further in future research.
+
+For restaurant owners and managers, these results underscore the importance of balancing availability with service quality. From a strategic standpoint, extending hours should be weighed not only against costs and potential revenue, but also against the potential reputational impact as reflected in online reviews.
+
+Future research could examine this relationship across different types of restaurants (e.g., fast food vs. fine dining) or look into customer visit times to better understand the dynamics behind these effects.
