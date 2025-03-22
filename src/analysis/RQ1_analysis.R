@@ -40,7 +40,7 @@ logit_reduced_model <- glm(Stars_Category ~ Hours_category,
 anova(logit_reduced_model, logit_model, test = "Chisq")
 
 table_RQ1 <- tableGrob(summary(logit_model)$coefficients)
-ggsave(here("gen", "output", "table_RQ1.png"), table_RQ1, width = 10, height = 8, dpi = 300)
+ggsave(here("gen", "output", "table_RQ1.png"), table_RQ1, width = 10, height = 6, dpi = 300)
 
 # ---------------------------
 # Assumption Checks
@@ -63,7 +63,7 @@ VIF_RQ1 <- vif(lm(as.numeric(Stars_Category) ~ Hours_category + state + review_c
        data = Yelp_clean_aggregated))
 
 VIF_table_RQ1<- tableGrob(VIF_RQ1)
-ggsave(here("gen", "output", "VIF_table_RQ1.png"), VIF_table_RQ1, width = 8, height = 4, dpi = 300)
+ggsave(here("gen", "output", "VIF_table_RQ1.png"), VIF_table_RQ1, width = 6, height = 2, dpi = 300)
 
 # ---------------------------
 # Additional Plots

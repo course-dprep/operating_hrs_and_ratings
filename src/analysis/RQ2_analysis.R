@@ -76,11 +76,11 @@ clustered_se <- vcovCL(ols_model, cluster = Yelp_clean$business_id, type = "HC3"
 
 # Summary with clustered standard errors
 table_RQ2 <- tableGrob(coeftest(ols_model, vcov = clustered_se))
-ggsave(here("gen", "output", "table_RQ2.png"), table_RQ2, width = 10, height = 8, dpi = 300)
+ggsave(here("gen", "output", "table_RQ2.png"), table_RQ2, width = 10, height = 6, dpi = 300)
 
-# Multicollinea rity Check (VIF)
+# Multicollinearity Check (VIF)
 VIF_RQ2 <- tableGrob(vif(ols_model))
-ggsave(here("gen", "output", "VIF_RQ2.png"), VIF_RQ2, width = 8, height = 4, dpi = 300)
+ggsave(here("gen", "output", "VIF_RQ2.png"), VIF_RQ2, width = 6, height = 2, dpi = 300)
 
 # ---------------------------
 # Additional Plots
@@ -104,3 +104,4 @@ predicted_sentiment_scores <- ggplot(Yelp_clean, aes(x = Hours_category, y = pre
   )
 
 ggsave(here("gen", "output", "predicted_sentiment_scores.png"), plot = predicted_sentiment_scores, width = 8, height = 6)
+
