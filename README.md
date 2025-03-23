@@ -56,11 +56,6 @@ These findings were robust even after controlling for the number of reviews and 
 
 These results highlight that longer operating hours may come at a reputational cost. Restaurant managers and owners can use these insights to find a better balance between availability and perceived service quality.
 
-## Deployment Information
-
-This project is easy to follow using an R Markdown document in the src folder. This document clearly presents the overview of our research, the research questions and the methodology. All the necessary packages are loaded and the datasets can be found in the data folder. The data is stored via Google Drive and can be opened using RStudio. The code to create the necessary visualisations and statistical analysis is also included.
-
-To run the entire project, type "make" in the command prompt and run. Make has to be installed in order for it to work. Please keep in mind that running the makefile can take up to several minutes.
 
 ## Repository Overview
 
@@ -77,6 +72,52 @@ To run the entire project, type "make" in the command prompt and run. Make has t
 ├── README.md
 ├── makefile
 ```
+
+## Deployment information
+
+The src folder  contains code for how we did our sampling, to illustrate the criteria used. However, you do not need to file to run the project. 
+The sampled datasets are stored via Google Drive, while the non-sampled datasets were too heavy for our computers to download. Therefore, one group member did the downloading and sampling once. 
+
+
+## Dependencies 
+
+- R. [Installation guide](https://tilburgsciencehub.com/building-blocks/configure-your-computer/statistics-and-computation/r/).
+- Make. [Installation guide](https://tilburgsciencehub.com/building-blocks/configure-your-computer/automation-and-workflows/make/).
+- To knit RMarkdown documents, make sure you have installed Pandoc using the [installation guide](https://pandoc.org/installing.html) on their website.
+
+- For R, install the following packages: 
+```
+install.packages("tidyverse")
+install.packages("googledrive")
+install.packages("httpuv")
+install.packages("here")
+install.packages("tidytext")
+install.packages("dplyr")
+install.packages("textdata") —> verwijderd in clean.r
+install.packages("stringr")
+install.packages("ggplot2")
+install.packages("skimr")
+install.packages("lmtest")
+install.packages("car")
+install.packages("gridExtra")
+install.packages("fixest")
+```
+
+## Running the code 
+To run the entire project, follow the next steps: 
+
+1. Fork this repository
+
+2. Open your command line / terminal and run the following code:
+```
+git clone https://github.com/course-dprep/operating_hrs_and_ratings.git
+```
+3. Set your working directory to `operating_hrs_and_ratings` and run the following command:
+```
+make
+```
+4. When make has succesfully run all the code, it will generate a PDF in the folder 'reporting'. This document clearly presents the overview of our research, the research questions and the methodology. The code to create the necessary visualisations and statistical analysis is also included.
+
 
 ## About
 
