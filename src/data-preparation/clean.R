@@ -3,13 +3,11 @@ options(repos = c(CRAN = "https://cloud.r-project.org/"))
 # Installing the necessary packages
 install.packages("tidytext")
 install.packages("dplyr")
-install.packages("textdata")
 install.packages("stringr")
 
 # Loading the necessary packages 
 library(tidytext)
 library(dplyr)
-library(textdata)
 library(here)
 library(tidyverse)
 library(stringr)
@@ -48,8 +46,7 @@ inspect_0hours_restaurants <- function(Yelp_clean, hours_col) {
 restaurants_0hours_list <- inspect_0hours_restaurants(Yelp_clean, hours)
 restaurants_0hours_list <- restaurants_0hours_list %>%
   distinct(name, .keep_all = TRUE) #Remove all duplicates so the list becomes easier to inspect the list. Each business will be presented once. 
-
-View(restaurants_0hours_list) #For most cases, 0:0-0:0 means they are closed on a specific day. Later on we remove businesses that are opened 0:0-0:0 each day, while we are not sure whether they are closed forever or opened 24H. 
+#For most cases, 0:0-0:0 means they are closed on a specific day. Later on we remove businesses that are opened 0:0-0:0 each day, while we are not sure whether they are closed forever or opened 24H. 
 
 #Create function for counting opening hours 
  extract_opening_hours <- function(Yelp_clean, hours) {
@@ -111,7 +108,6 @@ Yelp_clean <- Yelp_clean %>% drop_na(hours)
 # Sentiment Analysis
 
 # Load the AFINN sentiment lexicon
-textdata::download_lexicon_afinn()
 afinn <- get_sentiments("afinn")
 
 # Assign unique Review_ID
