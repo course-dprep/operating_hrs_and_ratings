@@ -2,22 +2,18 @@
 title: "Raw Data Exploration"
 author: "Tarn"
 date: "2025-03-12"
-output: pdf_document
+output: 
+  pdf_document: 
+  latex_engine: xelatex
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
 ```{r, echo = FALSE, include = FALSE}
 options(repos = c(CRAN = "https://cloud.r-project.org/"))
 
-#Installing necessary packages 
-install.packages("ggplot2")
-install.packages("skimr")
-
-#Loading packages
 library(ggplot2)
 library(tidyverse)
 library(here)
