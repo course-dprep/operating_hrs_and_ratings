@@ -2,7 +2,7 @@
 title: "Raw Data Exploration"
 author: "Tarn"
 date: "2025-03-12"
-output: pdf_document: 
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
