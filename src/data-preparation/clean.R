@@ -4,6 +4,8 @@ options(repos = c(CRAN = "https://cloud.r-project.org/"))
 install.packages("tidytext")
 install.packages("dplyr")
 install.packages("stringr")
+install.packages("ggplot2")
+install.packages("skimr")
 
 # Loading the necessary packages 
 library(tidytext)
