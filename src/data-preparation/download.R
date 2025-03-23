@@ -1,11 +1,5 @@
 options(repos = c(CRAN = "https://cloud.r-project.org/"))
 
-# Installing packages
-install.packages("tidyverse")
-install.packages("googledrive")
-install.packages("httpuv")
-install.packages("here")
-
 # Loading the packages 
 library(tidyverse)
 library(googledrive)
