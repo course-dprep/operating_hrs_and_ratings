@@ -11,16 +11,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, echo = FALSE, include = FALSE}
 options(repos = c(CRAN = "https://cloud.r-project.org/"))
-
-install.packages("fixest")
-install.packages("modelsummary")
-install.packages("cli")
-install.packages("tinytex")
-
-library(fixest)
-library(modelsummary)
-library(cli)
-library(tinytex)
 ```
 
 ## Introduction
