@@ -76,7 +76,7 @@ These results highlight that longer operating hours may come at a reputational c
 ## Deployment information
 
 The src folder  contains code for how we did our sampling, to illustrate the criteria used. However, you do not need to file to run the project. 
-The sampled datasets are stored via Google Drive, while the non-sampled datasets were too heavy for our computers to download. Therefore, one group member did the downloading and sampling once. 
+The sampled datasets are stored via Google Drive, while the non-sampled datasets were too heavy for our computers to download. As this was not a primarly goal of this course, only one group member sampled the datasets and added them to Google Drive. Therefore, the makefile starts with download.R. 
 
 
 ## Dependencies 
@@ -101,6 +101,8 @@ install.packages("lmtest")
 install.packages("car")
 install.packages("gridExtra")
 install.packages("fixest")
+install.packages("sandwich")
+install.packages("clubSandwich")
 ```
 
 ## Running the code 
@@ -116,8 +118,7 @@ git clone https://github.com/course-dprep/operating_hrs_and_ratings.git
 ```
 make
 ```
-4. When make has succesfully run all the code, it will generate a PDF in the folder 'reporting'. This document clearly presents the overview of our research, the research questions and the methodology. The code to create the necessary visualisations and statistical analysis is also included.
-
+4. When make has succesfully run all the code, it will generate a PDF in the folder 'reporting'. This document clearly presents the overview of our research, methodology, output tables, data visualisations and the conclusion. Additionally, a html-document will be created that shows the initial exploration of our data. 
 
 ## About
 
