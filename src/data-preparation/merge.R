@@ -1,10 +1,6 @@
 options(repos = c(CRAN = "https://cloud.r-project.org/"))
 
-#Install packages
-install.packages("tidyverse")
-install.packages("here")
-
-# Loading packages 
+# Loading necessarry packages 
 library(tidyverse)
 library(here)
 

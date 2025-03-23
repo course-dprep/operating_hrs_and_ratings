@@ -12,10 +12,19 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r setup, include=FALSE}
+#Installing necessary packages 
+install.packages("ggplot2")
+install.packages("skimr")
+
+#Loading packages
+library(ggplot2)
 library(tidyverse)
 library(here)
 library(skimr)
-library(ggplot2)
 ```
 
 ## Loading in the data

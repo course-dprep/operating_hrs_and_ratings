@@ -1,13 +1,8 @@
 options(repos = c(CRAN = "https://cloud.r-project.org/"))
 
-install.packages("tidyverse")
-install.packages("ggplot2")
-install.packages("here")
-install.packages("lmtest")
+#Install necessarry packages
 install.packages("sandwich")
 install.packages("clubSandwich")
-install.packages("car")
-install.packages("gridExtra")
 
 # Load necessary libraries
 library(tidyverse)

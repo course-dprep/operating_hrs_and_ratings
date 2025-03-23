@@ -1,6 +1,6 @@
 options(repos = c(CRAN = "https://cloud.r-project.org/"))
 
-# Installing the latest versions of the packages
+# Installing packages
 install.packages("tidyverse")
 install.packages("googledrive")
 install.packages("httpuv")

@@ -4,8 +4,6 @@ options(repos = c(CRAN = "https://cloud.r-project.org/"))
 install.packages("tidytext")
 install.packages("dplyr")
 install.packages("textdata")
-install.packages("here")
-install.packages("tidyverse")
 install.packages("stringr")
 
 # Loading the necessary packages 

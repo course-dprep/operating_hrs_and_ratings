@@ -1,8 +1,5 @@
 options(repos = c(CRAN = "https://cloud.r-project.org/"))
 
-install.packages("tidyverse")
-install.packages("ggplot2")
-install.packages("here")
 install.packages("lmtest")
 install.packages("car")
 install.packages("gridExtra")
