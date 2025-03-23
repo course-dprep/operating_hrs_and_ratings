@@ -1,9 +1,5 @@
 options(repos = c(CRAN = "https://cloud.r-project.org/"))
 
-install.packages("lmtest")
-install.packages("car")
-install.packages("gridExtra")
-
 # Load necessary libraries
 library(tidyverse)
 library(ggplot2)

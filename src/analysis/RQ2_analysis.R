@@ -1,9 +1,5 @@
 options(repos = c(CRAN = "https://cloud.r-project.org/"))
 
-#Install necessarry packages
-install.packages("sandwich")
-install.packages("clubSandwich")
-
 # Load necessary libraries
 library(tidyverse)
 library(ggplot2)
