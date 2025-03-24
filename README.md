@@ -93,7 +93,6 @@ install.packages("httpuv")
 install.packages("here")
 install.packages("tidytext")
 install.packages("dplyr")
-install.packages("textdata") —> verwijderd in clean.r
 install.packages("stringr")
 install.packages("ggplot2")
 install.packages("skimr")
