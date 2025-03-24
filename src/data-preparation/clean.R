@@ -102,8 +102,15 @@ Yelp_clean <- Yelp_clean %>% drop_na(hours)
 
 # Sentiment Analysis
 
-# Load the AFINN sentiment lexicon
-afinn <- get_sentiments("afinn")
+# Downloading the AFINN file and storing it temporarly.
+zip_url <- "https://www2.imm.dtu.dk/pubdb/edoc/imm6010.zip"
+zip_path <- tempfile(fileext = ".zip")
+download.file(zip_url, zip_path)
+unzip(zip_path, files = "AFINN/AFINN-111.txt", exdir = tempdir())
+afinn_path <- file.path(tempdir(), "AFINN", "AFINN-111.txt")
+
+# Read into R
+afinn <- read.delim(afinn_path, header = FALSE, col.names = c("word", "value"))
 
 # Assign unique Review_ID
 Yelp_clean <- Yelp_clean %>%
