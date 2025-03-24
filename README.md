@@ -102,6 +102,7 @@ install.packages("gridExtra")
 install.packages("fixest")
 install.packages("sandwich")
 install.packages("clubSandwich")
+install.packages("tidytext")
 ```
 
 ## Running the code 
