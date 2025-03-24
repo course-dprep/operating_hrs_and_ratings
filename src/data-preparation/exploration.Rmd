@@ -51,7 +51,7 @@ ggplot(Yelp, aes(x = state)) +
 
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 ggplot(Yelp, aes(x = review_count)) +
   geom_histogram(binwidth = 50, fill = "darkorange", color = "black") +
   labs(title = "Distribution of Review Counts", x = "Review Count", y = "Frequency") +
@@ -59,14 +59,14 @@ ggplot(Yelp, aes(x = review_count)) +
 
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 ggplot(Yelp, aes(x = as.factor(stars.x))) +
   geom_bar(fill = "lightgreen", color = "black") +
   labs(title = "Distribution of Business Star Ratings", x = "Stars", y = "Count")
 
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 ggplot(Yelp, aes(x = as.factor(is_open))) +
   geom_bar(fill = "cyan", color = "black") +
   labs(title = "Count of Open vs. Closed Businesses", x = "Open (1=Yes, 0=No)", y = "Count")
